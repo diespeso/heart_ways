@@ -5,7 +5,6 @@ const hbs = require('express-handlebars')
 
 const app = express()
 
-var mysql = require('mysql');
 
 app.use(express.urlencoded({extended: true}))
 app.use(express.json())
@@ -22,7 +21,16 @@ const router = require('./routes/routes')
 app.use('/', router)
 
 const config = require('./config')
+const { default: mongoose } = require('mongoose')
 
-app.listen(config.port, () => {
-    console.log(`Server running at: http://localhost:${config.port}`)
+mongoose.connect(config.db, config.urlParser, (err, res) => {
+    if(err) {
+        return console.log(`Error al conectar a BD: ${err}`)
+    }
+
+    console.log(`DB: ${config.db}`);
+    app.listen(config.port, () => {
+        console.log(`Server running at: http://localhost:${config.port}`)
+    })
+
 })
