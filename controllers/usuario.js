@@ -64,7 +64,7 @@ const deleteUsuario = ((req, res) => {
 
     Usuario.findOne({username: usuario}, (err, encontrado) => {
         if(err) return res.status(500).send({
-            message: `error al encontrar producto: ${err}`
+            message: `error al encontrar usuario: ${err}`
         })
 
         if(!encontrado) return res.status(400).send({
@@ -73,7 +73,7 @@ const deleteUsuario = ((req, res) => {
 
         Usuario.deleteOne({username: usuario}, err => {
             if(err) return res.status(500).send({
-                message: `error al borrar producto: ${err}`
+                message: `error al borrar usuario: ${err}`
             })
             return res.status(200).send({message: `se borró el usuario: ${encontrado}`})
         })
