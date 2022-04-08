@@ -51,7 +51,7 @@ const updateUsuario = ((req, res) => {
             })
 
             if(!usuario) return res.status(400).send({
-                messsage: `usuario no encontrado: ${username}`
+                messsage: `usuario no encontrado: ${usr_mod.username}`
             })
 
             return res.status(200).send({message: `actualizado a: ${usuario}`})

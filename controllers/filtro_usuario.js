@@ -44,7 +44,7 @@ const updateFiltroUsuario = ((req, res) => {
         })
 
         if(!encontrado) return res.status(400).send({
-            messsage: `filtrousuario no encontrado: ${username}`
+            messsage: `filtrousuario no encontrado: ${fusr_mod.id}`
         })
 
         return res.status(200).send({message: `actualizado a ${encontrado}`})
