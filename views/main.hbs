@@ -1,0 +1,55 @@
+<link rel="stylesheet" href="/css/main.css">
+
+    <div class="row">
+        <div class="col-8 side-img">
+            <img src="/img/placeholder.png">
+        </div>
+        <div class="col">
+            <div>
+                <h1>Hearts ways</h1>
+
+                <h2>Chat de citas random basado en preferencias</h2>
+            </div>
+            <hr>
+            <div>
+                <h2>Unirse</h2>
+                <form action="/signup" method="post">
+                    <label >Usuario</label>
+                    <input name="username" type="text">
+                    <br>
+                    <label>Correo</label>
+                    <input name="correo" type="text">
+                    <br>
+                    <label>Contraseña</label>
+                    <input name="pass" type="password">
+                    <br>
+                    <br>
+                    <label>Fecha de nacimiento</label>
+                    <input name="fecha_nacimiento" type="date">
+                    <br>
+                    <label>Sexo</label>
+                    <br>
+                    <input type="radio" id="masc" name="sexo" value="M">
+                    <label for="masc">Masculino</label>
+                    <input type="radio" id="fem" name="sexo" value="F">
+                    <label for="fem">Femenino</label>
+                    <br>
+                    <input type="submit" value="Unirme">
+                </form>
+            </div>
+            <hr>
+            <div>
+                <h2>Ingresar</h2>
+                <form action="/login" method="post">
+                    <label>Usuario</label>
+                    <input name="username" type="text">
+                    <br>
+                    <label>Contraseña</label>
+                    <input name="pass" type="password">
+                    <br>
+                    <input type="submit" value="Ingresar">
+                </form>
+            </div>
+        </div>
+    </div>
+

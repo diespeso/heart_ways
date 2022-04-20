@@ -6,7 +6,8 @@ var UsuarioSchema = new Schema({ //TODO: agregar campo para contrasenia
     username: {type: String, unique: true, required: true},
     correo: {type: String, required: true},
     fecha_nacimiento: {type: Date, required: true},
-    sexo: {type: String, required: true, enum: ['M', 'F']}
+    sexo: {type: String, required: true, enum: ['M', 'F']},
+    pass: {type: String, required: true}
 });
 
 module.exports = mongoose.model('Usuario', UsuarioSchema)

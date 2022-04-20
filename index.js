@@ -2,8 +2,20 @@
 
 const express = require('express')
 const hbs = require('express-handlebars')
-
+const sessions = require('express-session')
+//const cookieParser = require('cookie-parser')
 const app = express()
+const oneDay = 1000 * 60 * 60 * 24;
+
+const ws = require('ws') //websocket
+
+app.use(sessions({
+    secret: 'secretstringuwu',
+    saveUninitialized: true,
+    cookie: {maxAge: oneDay},
+    resave: false
+}))
+//app.use(cookieParser());
 
 
 app.use(express.urlencoded({extended: true}))
@@ -28,6 +40,7 @@ mongoose.connect(config.db, config.urlParser, (err, res) => {
         return console.log(`Error al conectar a BD: ${err}`)
     }
 
+   
     console.log(`DB: ${config.db}`);
     app.listen(config.port, () => {
         console.log(`Server running at: http://localhost:${config.port}`)

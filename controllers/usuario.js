@@ -8,7 +8,8 @@ const createUsuario = ((req, res) => {
         username: req.body.username,
         correo: req.body.correo,
         fecha_nacimiento: req.body.fecha_nacimiento,
-        sexo: req.body.sexo
+        sexo: req.body.sexo,
+        pass: req.body.pass
     });
     newUsuario.save((err, user) => {
         if(err) {
