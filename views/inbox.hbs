@@ -22,6 +22,13 @@
     }
 
     var sock;
+    var chats;
+    var rel_chat = {};
+
+    function set_chats(c, r_c) {
+        chats = c;
+        rel_chat = r_c;
+    }
 
     var username = '{{username}}'; //handlebars
     var destinatario_actual;
@@ -33,6 +40,41 @@
             username: username
         }))
     };
+
+    sock.onmessage = function(msg) {
+        var f = true //provisional, luego sera solo json
+        try {
+            var json = JSON.parse(msg.data)
+        } catch(e) {
+            console.log(`received: ${msg.data}`)
+            f = false
+        }
+        if(f) {
+            if(json.type == 'inbox') {
+                console.log(json)
+
+                set_chats(json.chats, json.users)
+                for(var interaccion in json.users) {
+                    if(json.users[interaccion] == username) {
+                        continue //if its our own, ignore
+                    }
+                    document.getElementById('inbox-side-list').innerHTML += `
+                        <a href="#" onclick="cargar_chat('${interaccion}')">
+                            <div class="inbox-card">
+                                <img src="/img/placeholder.png">
+                                <div class="summary">
+                                    <p class="inbox-username">${json.users[interaccion]}</p>
+                                    <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                                </div>
+                            </div>
+                        </a>
+                    `
+                }
+            }
+        }
+        
+        
+    }
 
     function enviarMensaje() {
         var mensaje = document.getElementById('mensaje').value;
@@ -46,9 +88,63 @@
         sock.send(JSON.stringify(json));
     }
 
+    function render_chat(chat) {
+        //get user id
+        var result = '';
+        var usr_id;
+        for(var key in rel_chat) {
+            if(rel_chat[key] == username) {
+                usr_id = key;
+                break;
+            }
+        }
+        chat.forEach((message) => {
+            if(message.id_destinatario == usr_id) {
+                result += `
+                <div class="message-bubble-left">
+                    <p>
+                        ${message.contenido}
+                    </p>
+                </div>
+                `
+            } else if(message.id_remitente == usr_id) {
+                result += `
+                    <div class="message-bubble-right">
+                        <p>
+                            ${message.contenido}
+                        </p>
+                    </div>
+                `
+            }
+        })
+        return result
+    }
+
+    function cargar_chat(user) {
+        cambiar_destinatario(user)
+        var f = false;
+        for(var id in rel_chat) {
+            if(id == user) {
+                f = true;
+            }
+        }
+        if(f) {
+            document.getElementById('chat').innerHTML = render_chat(chats[user])
+        }
+        
+    }
+
     function cambiar_destinatario(user) {
-        destinatario_actual = user;
+        /*destinatario_actual = user;*/
+        console.log(rel_chat)
+        console.log(user)
+        destinatario_actual = rel_chat[user]
         console.log(`destinatario actual: ${destinatario_actual}`)
+    }
+
+    function cambiar_destinatario_illegal(user) {
+        destinatario_actual = user;
+        console.log(`destinatario actual ilegal: ${destinatario_actual}`)
     }
 
 
@@ -73,156 +169,39 @@
 
     <div id="main">
         <div class="row">
-            <div class="col-3 inbox-side-list">
-                <a href="#" onclick="cambiar_destinatario('nuevo')">
+            <div class="col-3 inbox-side-list" id="inbox-side-list">
+                <!-- <a href="#" onclick="cargar_chat('nuevo')">
                     <div class="inbox-card">
                         <img src="/img/placeholder.png">
                         <div class="summary">
                             <p class="inbox-username">nuevo</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                            <p>mensaje</p>
                         </div>
                     </div>
-                </a>
-                <a href="#" onclick="cambiar_destinatario('diespeso')">
+                </a> -->
+            <a href="#" onclick="cambiar_destinatario_illegal('diespeso')">
                     <div class="inbox-card">
                         <img src="/img/placeholder.png">
                         <div class="summary">
                             <p class="inbox-username">diespeso</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                <a href="#" onclick="cambiar_destinatario('username')">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
-                        </div>
-                    </div>
-                </a>
-                <a href="#">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">username</p>
-                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                            <p>mensaje</p>
                         </div>
                     </div>
                 </a>
             </div>
             <div class="col-9 chat-container">
                 <div class="row centered">
-                    <div class="chat">
-                        ok
+                    <div class="chat" id="chat">
+                        <div class="message-bubble-left">
+                            <p>
+                                texto
+                            </p>
+                        </div>
+                        <div class="message-bubble-right">
+                            <p>
+                                texto
+                            </p>
+                        </div>
                     </div>
                 </div>
 

@@ -1,0 +1,265 @@
+<link rel="stylesheet" href="/css/inbox.css">
+
+<script>
+
+    //codigo para el menu sidebar deslizante
+    var opened = false;
+    var port = 80; //quizas cambiar y usar handlebars?
+    function openSidebar() {
+        if(opened) {
+            closeSidebar();
+        } else {
+            document.getElementById("mysidebar").style.width = "15%";
+            document.getElementById("main").style.marginLeft = "15%";
+            opened = true;
+        }
+    }
+
+    function closeSidebar() {
+        document.getElementById("mysidebar").style.width = "0%";
+        document.getElementById("main").style.marginLeft = "0%";
+        opened = false;
+    }
+
+    var sock;
+
+    var username = '{{username}}'; //handlebars
+    var destinatario_actual;
+    sock = new WebSocket(`ws://localhost:${port}`);
+    
+    sock.onopen = function(e) {
+        sock.send(JSON.stringify({
+            type: 'registration',
+            username: username
+        }))
+    };
+
+    sock.onmessage = function(msg) {
+        var f = true //provisional, luego sera solo json
+        try {
+            var json = JSON.parse(msg.data)
+        } catch(e) {
+            console.log(`received: ${msg.data}`)
+            f = false
+        }
+        if(f) {
+            if(json.type == 'inbox') {
+                console.log(json)
+            }
+        }
+        
+        
+    }
+
+    function enviarMensaje() {
+        var mensaje = document.getElementById('mensaje').value;
+        var json = {
+            type: 'message',
+            mensaje: mensaje,
+            remitente: username,
+            destinatario_actual: destinatario_actual
+        };
+        console.log(`enviando mensaje: ${JSON.stringify(json)}`)
+        sock.send(JSON.stringify(json));
+    }
+
+    function cambiar_destinatario(user) {
+        destinatario_actual = user;
+        console.log(`destinatario actual: ${destinatario_actual}`)
+    }
+
+
+</script>
+
+
+<div class="top-bar">
+    <button class="open-sidebar" onclick="openSidebar()">Abrir</button>
+
+    <img src="/img/placeholder.png">
+</div>
+
+<div class="contenido">
+    <div class="sidebar" id="mysidebar">
+        <!--<a href="javascript::void(0)" class="close-sidebar" onclick="closeSidebar()">X</a>-->
+        <a href="/inbox"><div class="icono-sidebar">s</div>Inbox</a>
+        <a href="/matches"><div class="icono-sidebar">s</div>Matches</a>
+        <a href="/perfil"><div class="icono-sidebar">s</div>Perfil</a>
+        <a href="/configuracion"><div class="icono-sidebar">s</div>Configuración</a>
+        <a href="/logout"><div class="icono-sidebar">s</div>Cerrar sesión</a>
+    </div>
+
+    <div id="main">
+        <div class="row">
+            <div class="col-3 inbox-side-list">
+                <a href="#" onclick="cambiar_destinatario('nuevo')">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">nuevo</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#" onclick="cambiar_destinatario('diespeso')">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">diespeso</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#" onclick="cambiar_destinatario('nuevo2')">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">nuevo2</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+                <a href="#">
+                    <div class="inbox-card">
+                        <img src="/img/placeholder.png">
+                        <div class="summary">
+                            <p class="inbox-username">username</p>
+                            <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-9 chat-container">
+                <div class="row centered">
+                    <div class="chat">
+                        ok
+                    </div>
+                </div>
+
+                <div class="row centered">
+                    <div class="col-11  new-message-container">
+                        <form>
+                            <input type="textfield" id="mensaje">
+                        </form>
+                    </div>
+                    <div class="col-1 btn-send">
+                        <button onclick="enviarMensaje()">
+                            Enviar
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        
+    </div>
+</div>
+

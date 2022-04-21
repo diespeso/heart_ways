@@ -31,6 +31,141 @@ ws_server.on('connection', function connection(ws, request){
         console.log(json)
         if(json.type == 'registration') {
             console.log(`REGISTRATION: ${json.username}`)
+            var usr_dict = {};
+            Usuario.findOne({username: json.username}, async (err, usuario) => {
+                if(err) {
+                    ws.send('fallo')
+                    return
+                }
+
+                if(!usuario) {
+                    ws.send('usuario no encontrado')
+                    return
+                }
+
+                var x = await Mensaje.aggregate([
+                    {
+                        $match: {
+                            id_destinatario: usuario._id
+                        }
+                    }
+                ])
+                var recibidos_ids = [];
+                // encontrar todos los usuarios que han mandado mensajes al usuario
+                x.forEach((data_mensaje) => {
+                    if(recibidos_ids.includes(data_mensaje.id_remitente.toString())) {
+                        //pass
+                    } else {
+                        recibidos_ids.push(data_mensaje.id_remitente.toString())
+                    }
+                    
+                    
+                })
+
+                var y = await Mensaje.aggregate([
+                    {
+                        $match: {
+                            id_remitente: usuario._id
+                        }
+                    }
+                ])
+                var enviados_ids = [];
+                //encontrar los usuarios a los que el usuario ha enviado mensajes
+                y.forEach((data_mensaje) => {
+                    if(enviados_ids.includes(data_mensaje.id_destinatario.toString())) {
+                        //pass
+                    } else {
+                        enviados_ids.push(data_mensaje.id_destinatario.toString())
+                    }
+                })
+
+                var interactuados = recibidos_ids.concat(enviados_ids) //ya sea enviados o recibidos
+
+                //var rel_chats = {}
+
+                //find users of all messages
+                /*Usuario.find({
+                    '_id': {
+                        $in: interactuados
+                    }
+                }, (err, usuarios) => {
+                    if(err) {
+                        ws.send('fallo')
+                        return
+                    }
+
+                    if(!usuarios) {
+                        ws.send('no encon   trado')
+                        return
+                    }
+                    usuarios.forEach((usuario) => { //crear relacion de ids y usernames
+                        rel_chats[usuario._id.toString()] = usuario.username
+                        console.log(`heY: ${JSON.stringify(rel_chats)}`)
+                    })
+                })*/
+                //console.log(`@@@@@@@@: ${JSON.stringify(rel_chats)}`)
+                //agregar al usuario del inbox a la relacion
+                //rel_chats[usuario._id.toString()] = usuario.username
+                
+                var data = {}
+                interactuados.forEach((id) => {
+                    data[id] = []
+                })
+                console.log(data)
+                console.log('todos los mensajes')
+                console.log(x.concat(y))
+                x.concat(y).forEach((mensaje) => {
+                    if(usuario._id.equals(mensaje.id_remitente)) {
+                        data[mensaje.id_destinatario.toString()].push(mensaje)
+                    } else if(usuario._id.equals(mensaje.id_destinatario)) {
+                        data[mensaje.id_remitente.toString()].push(mensaje)
+                    }
+                })
+
+                //sort mensajes por timestamp
+                for(let id in data) {
+                    data[id] = data[id].sort(function comparar(a, b) {
+                        if(a.timestamp > b.timestamp) return 1
+                        if(a.timestamp == b.timestamp) return 0
+                        if(a.timestamp < b.timestamp) return -1
+                    })
+                }
+                
+                //console.log(`rel_chats: ${JSON.stringify(rel_chats)}`)
+                //generación del diccionario de id -> username
+                Usuario.find({
+                    '_id': {$in: interactuados}
+                }, (err, usuarios) => {
+                    if(err) ws.send('error')
+
+                    if(!usuarios) ws.send('no encontrado')
+
+                    var rel_chat = {}
+                    rel_chat[usuario._id.toString()] = usuario.username //usuario duenio del inbox
+                    usuarios.forEach((usuario) => {
+                        rel_chat[usuario._id.toString()] = usuario.username
+                    })
+
+                    console.log('data a enviar: ')
+                    //datos a enviar
+                    //mensajes ordenados (o quizas ordenar en fron end)
+                    //ids y usernames de los participantes
+                    //fotografias de perfil de los usernames(o quizas cargar con un url)
+                    console.log(data)
+                    console.log('chats,rel')
+                    console.log(JSON.stringify(rel_chat))
+
+                    ws.send(
+                        JSON.stringify(
+                            {
+                                type: 'inbox',
+                                chats: data,
+                                users: rel_chat
+                            }
+                        )
+                    )
+                })
+            })
         } else if (json.type == 'message') {
             //GUARDAR A BASE DE DATOS
             //TODO: revisar casos donde no hay usuario ni destinatario correctos
@@ -121,6 +256,10 @@ const { createPreferenciaPersonalidad, readPreferenciaPersonalidad, updatePrefer
 const { createMensaje, readMensaje, updateMensaje, deleteMensaje } = require('../controllers/mensaje');
 const res = require('express/lib/response');
 const Mensaje = require('../models/mensaje');
+const { distinct } = require('../models/usuario');
+const usuario = require('../models/usuario');
+const { default: mongoose } = require('mongoose');
+const { Socket } = require('dgram');
 
 router.get('/', (req, res) => {
     console.log("SESION")
