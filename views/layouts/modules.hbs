@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Heart's ways</title>
+        <link rel="stylesheet" href="/css/modules.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    
+        <script>
+            var opened = false;
+            function openSidebar() {
+                if(opened) {
+                    closeSidebar();
+                } else {
+                    document.getElementById("mysidebar").style.width = "15%";
+                    document.getElementById("main").style.marginLeft = "15%";
+                    opened = true;
+                }
+            }
+
+            function closeSidebar() {
+                document.getElementById("mysidebar").style.width = "0%";
+                document.getElementById("main").style.marginLeft = "0%";
+                opened = false;
+            }
+        </script>
+    </head>
+    <body>
+        <div class="top-bar">
+            <button class="open-sidebar" onclick="openSidebar()">Abrir</button>
+            <img src="/img/placeholder.png">
+        </div>
+        <div class="contenido">
+            <div class="sidebar" id="mysidebar">
+                <!--<a href="javascript::void(0)" class="close-sidebar" onclick="closeSidebar()">X</a>-->
+                <a href="/inbox"><div class="icono-sidebar">s</div>Inbox</a>
+                <a href="/matches"><div class="icono-sidebar">s</div>Matches</a>
+                <a href="/perfil"><div class="icono-sidebar">s</div>Perfil</a>
+                <a href="/configuracion"><div class="icono-sidebar">s</div>Configuración</a>
+                <a href="/logout"><div class="icono-sidebar">s</div>Cerrar sesión</a>
+            </div>
+
+            <div id="main">
+                {{{body}}}
+            </div>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>
+
+
+
+

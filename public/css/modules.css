@@ -1,0 +1,63 @@
+.top-bar {
+    background-color: grey;
+    height: 10vh;
+}
+
+.top-bar img {
+    width: auto;
+    height: 50%;
+    margin: 1%;
+}
+
+.top-bar p {
+    display: inline-block;
+    margin-left: 1%;
+}
+
+
+.sidebar {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1;
+    /*top: 0;*/
+    left: 0;
+    overflow-x: hidden;
+    transition: 0.5s;
+    background-color: beige;
+    box-shadow: 1px 5px 2px 3px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar a {
+    background-color: orange;
+    display: block;
+    padding-top: 5%;
+    padding-bottom: 5%;
+    margin: 1%;
+
+}
+
+.icono-sidebar {
+    width: 10%;
+    height: 10%;
+    background-color: black;
+    display: inline-block;
+    margin-left: 3%;
+    margin-right: 3%;
+}
+
+
+.close-sidebar {
+}
+
+#main {
+    background-color: aliceblue;
+    transition: margin-left 0.5s;
+    height: 90vh;
+    overflow: hidden;
+}
+
+body {
+    background-color: pink;
+    overflow: hidden;
+}

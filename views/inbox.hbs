@@ -3,23 +3,7 @@
 <script>
 
     //codigo para el menu sidebar deslizante
-    var opened = false;
     var port = 80; //quizas cambiar y usar handlebars?
-    function openSidebar() {
-        if(opened) {
-            closeSidebar();
-        } else {
-            document.getElementById("mysidebar").style.width = "15%";
-            document.getElementById("main").style.marginLeft = "15%";
-            opened = true;
-        }
-    }
-
-    function closeSidebar() {
-        document.getElementById("mysidebar").style.width = "0%";
-        document.getElementById("main").style.marginLeft = "0%";
-        opened = false;
-    }
 
     var sock;
     var chats;
@@ -30,16 +14,27 @@
         rel_chat = r_c;
     }
 
-    var username = '{{username}}'; //handlebars
+    var username = '{{username}}'; //handlebars, quizas seria mejor con session pero asi esta bien la vdd
     var destinatario_actual;
     sock = new WebSocket(`ws://localhost:${port}`);
     
     sock.onopen = function(e) {
+        console.log('recarga!')
         sock.send(JSON.stringify({
             type: 'registration',
             username: username
         }))
     };
+
+    sock.onclose = function(e) {
+        //cant send messages when close
+
+        console.log('CERRANDO')
+        sock.send(JSON.stringify({
+            type: 'closing',
+            username: username
+        }))
+    }
 
     sock.onmessage = function(msg) {
         var f = true //provisional, luego sera solo json
@@ -50,14 +45,21 @@
             f = false
         }
         if(f) {
-            if(json.type == 'inbox') {
+            if(json.type == 'message') {
+                console.log(JSON.stringify(json))
+                cargar_mensaje(json)
+            } else if(json.type == 'inbox') {
+                document.getElementById('inbox-side-list').innerHTML = '' //rewrite
                 console.log(json)
 
                 set_chats(json.chats, json.users)
+                
                 for(var interaccion in json.users) {
+                    console.log(interaccion)
                     if(json.users[interaccion] == username) {
                         continue //if its our own, ignore
                     }
+                    
                     document.getElementById('inbox-side-list').innerHTML += `
                         <a href="#" onclick="cargar_chat('${interaccion}')">
                             <div class="inbox-card">
@@ -86,6 +88,29 @@
         };
         console.log(`enviando mensaje: ${JSON.stringify(json)}`)
         sock.send(JSON.stringify(json));
+        document.getElementById('mensaje').value = '';
+    }
+
+    
+
+    function cargar_chat(user) {
+        cambiar_destinatario(user)
+        ///code might break
+        sock.send(JSON.stringify({
+            type: 'registration',
+            username: username
+        }))
+        ///code might break
+        var f = false;
+        for(var id in rel_chat) {
+            if(id == user) {
+                f = true;
+            }
+        }
+        if(f) {
+            document.getElementById('chat').innerHTML = render_chat(chats[user])
+        }
+        
     }
 
     function render_chat(chat) {
@@ -120,18 +145,24 @@
         return result
     }
 
-    function cargar_chat(user) {
-        cambiar_destinatario(user)
-        var f = false;
-        for(var id in rel_chat) {
-            if(id == user) {
-                f = true;
-            }
+    function cargar_mensaje(mensaje) {
+        if(mensaje.destinatario == username) {
+            document.getElementById('chat').innerHTML += `
+                <div class="message-bubble-left">
+                    <p>
+                        ${mensaje.contenido}
+                    </p>
+                </div>
+            `
+        } else if(mensaje.remitente == username) {
+            document.getElementById('chat').innerHTML += `
+                <div class="message-bubble-right">
+                    <p>
+                        ${mensaje.contenido}
+                    </p>
+                </div>
+            `
         }
-        if(f) {
-            document.getElementById('chat').innerHTML = render_chat(chats[user])
-        }
-        
     }
 
     function cambiar_destinatario(user) {
@@ -150,78 +181,29 @@
 
 </script>
 
-
-<div class="top-bar">
-    <button class="open-sidebar" onclick="openSidebar()">Abrir</button>
-
-    <img src="/img/placeholder.png">
-</div>
-
-<div class="contenido">
-    <div class="sidebar" id="mysidebar">
-        <!--<a href="javascript::void(0)" class="close-sidebar" onclick="closeSidebar()">X</a>-->
-        <a href="/inbox"><div class="icono-sidebar">s</div>Inbox</a>
-        <a href="/matches"><div class="icono-sidebar">s</div>Matches</a>
-        <a href="/perfil"><div class="icono-sidebar">s</div>Perfil</a>
-        <a href="/configuracion"><div class="icono-sidebar">s</div>Configuración</a>
-        <a href="/logout"><div class="icono-sidebar">s</div>Cerrar sesión</a>
+<div class="row">
+    <div class="col-3 inbox-side-list" id="inbox-side-list">
+    
     </div>
-
-    <div id="main">
-        <div class="row">
-            <div class="col-3 inbox-side-list" id="inbox-side-list">
-                <!-- <a href="#" onclick="cargar_chat('nuevo')">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">nuevo</p>
-                            <p>mensaje</p>
-                        </div>
-                    </div>
-                </a> -->
-            <a href="#" onclick="cambiar_destinatario_illegal('diespeso')">
-                    <div class="inbox-card">
-                        <img src="/img/placeholder.png">
-                        <div class="summary">
-                            <p class="inbox-username">diespeso</p>
-                            <p>mensaje</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-9 chat-container">
-                <div class="row centered">
-                    <div class="chat" id="chat">
-                        <div class="message-bubble-left">
-                            <p>
-                                texto
-                            </p>
-                        </div>
-                        <div class="message-bubble-right">
-                            <p>
-                                texto
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row centered">
-                    <div class="col-11  new-message-container">
-                        <form>
-                            <input type="textfield" id="mensaje">
-                        </form>
-                    </div>
-                    <div class="col-1 btn-send">
-                        <button onclick="enviarMensaje()">
-                            Enviar
-                        </button>
-                    </div>
-                </div>
-
+    <div class="col-9 chat-container">
+        <div class="row centered">
+            <div class="chat" id="chat">
             </div>
         </div>
 
-        
+        <div class="row centered">
+            <div class="col-11  new-message-container">
+                <form onsubmit="enviarMensaje();return false;" action="#">
+                    <input type="textfield" id="mensaje">
+                </form>
+            </div>
+            <div class="col-1 btn-send">
+                <button onclick="enviarMensaje()">
+                    Enviar
+                </button>
+            </div>
+        </div>
     </div>
 </div>
+
 

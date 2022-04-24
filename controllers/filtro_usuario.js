@@ -6,6 +6,7 @@ const path = require('path')
 const createFiltroUsuario = ((req, res) => {
     const newFiltroUsuario = new FiltroUsuario({
         sexo_interes: req.body.sexo_interes,
+        id_usuario: req.body.id_usuario,
         edad_min: req.body.edad_min,
         edad_max: req.body.edad_max
     })

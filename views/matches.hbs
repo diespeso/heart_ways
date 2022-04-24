@@ -1,0 +1,158 @@
+<link rel="stylesheet" href="/css/matches.css">
+<script>
+    var port = 80;
+    var sock;
+    var username = '{{username}}'
+    var destinatario_actual;
+
+    function hacer_match() {
+        console.log('enviando peticion match...')
+
+        sock = new WebSocket(`ws://localhost:${port}`);
+
+        sock.onopen = function(e) {
+            console.log('matching socket open')
+            sock.send(JSON.stringify({
+                type: 'match_request',
+                username: username
+            }))
+        }
+
+        sock.onmessage = function(msg) {
+            var f = true;
+            try {
+                var json = JSON.parse(msg.data);
+            } catch(e) {
+                f = false;
+            }
+            
+            if(f) {
+                if(json.type == 'match_message') {
+                    console.log('mensaje!')
+                    console.log(JSON.stringify(json))
+                    cargar_mensaje(json)
+                } else if(json.type == 'match_found') {
+                    document.getElementById('contenedor_matching').innerHTML = pantallas.found;
+                    console.log(JSON.stringify(json));
+                    destinatario_actual = json.match;
+                }
+            }
+        }
+
+        document.getElementById('contenedor_matching').innerHTML = pantallas.matching;
+    }
+
+    function cargar_mensaje(mensaje) {
+        if(mensaje.destinatario == username) {
+            document.getElementById('chat').innerHTML += `
+                <div class="message-bubble-left">
+                    <p>
+                        ${mensaje.contenido}
+                    </p>
+                </div>
+            `
+        } else if(mensaje.remitente == username) {
+            document.getElementById('chat').innerHTML += `
+                <div class="message-bubble-right">
+                    <p>
+                        ${mensaje.contenido}
+                    </p>
+                </div>
+            `
+        }
+    }
+
+    function enviar_mensaje() {
+        console.log('enviando mensaje...')
+        var mensaje = document.getElementById('mensaje').value;
+        var json = {
+            type: 'match_message',
+            mensaje: mensaje,
+            remitente: username,
+            destinatario_actual: destinatario_actual
+        };
+        console.log(`enviando mensaje: ${JSON.stringify(json)}`)
+        sock.send(JSON.stringify(json));
+        document.getElementById('mensaje').value = '';
+        //show_pop_up()
+    }
+
+    var pantallas = {}
+    pantallas.inicio = `
+        <h2>Intentar match!</h2>
+        <button onclick="hacer_match()">
+            Hacer MATCH
+        </button>
+    `;
+
+    pantallas.matching = `
+        <h2>Matching...<h2>
+            <img src="/img/loading_dots.gif">
+    `;
+
+    pantallas.found = `
+        <h2>Hora de chatear!</h2>
+        <div class="chat" id="chat">
+
+        </div>
+        <div class="row">
+            <div class="col-11 new-message-container">
+                <form onsubmit="enviar_mensaje();return false;" action="#">
+                    <input type="textfield" id="mensaje">
+                </form>
+            </div>
+            <div class="col-1 btn-send">
+                <button onclick="enviar_mensaje()">Enviar</button>
+            </div>
+        </div>
+
+    `;
+
+    window.onload = function() {
+        document.getElementById('contenedor_matching').innerHTML = pantallas.inicio;
+    }
+
+    window.onbeforeunload = function() {
+        console.log('recargando>>>>>>>>>>>>>>>>>>>>')
+
+        sock.send(JSON.stringify({
+            type: 'match_close',
+            username: username
+        }))
+    }
+
+
+    function click_no() {
+        hide_pop_up()
+    }
+
+    function click_si() {
+        show_pop_up()
+    }
+
+    function hide_pop_up() {
+        document.getElementById('screen-blocker').style.display = 'none';
+        document.getElementById('screen').classList.remove('blur-filter');
+    }
+
+    function show_pop_up() {
+        document.getElementById('screen').classList.add('blur-filter');
+        document.getElementById('screen-blocker').style.display = 'block';
+    }
+
+</script>
+<div class="screen" id="screen">
+    <div id="contenedor_matching">
+
+    </div>
+</div>
+<div id="screen-blocker">
+    <div id="mensaje-tiempo">
+        <h2>Se ha agotado el tiempo!</h2>
+        <div id="decision-container">
+            <p>deseas seguir chateando con x?</p>
+            <button id="btn-si" onclick="click_si()">Sí</button>
+            <button id="btn-no" onclick="click_no()">No</button>
+        </div>
+    </div>
+</div>

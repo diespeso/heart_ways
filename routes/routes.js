@@ -7,12 +7,13 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const salt_rounds = 10;
 
-const { append } = require('express/lib/response');
+const { append, json } = require('express/lib/response');
 
 module.exports = router;
 
 const Usuario = require('../models/usuario');
-
+const PreferenciaPersonalidad = require('../models/preferencia_personalidad')
+const FiltroUsuario = require('../models/filtro_usuario')
 const ws = require('ws');
 const config = require('../config')
 
@@ -21,16 +22,57 @@ console.log('websockets server running at: ws://localhost:%s', config.ws_port)
 
 var user_sockets = {};
 
+var matching_users = {};
+
+var match_sockets = {};
+
+/*estructura
+ matching-user[username] = {
+    id: id,
+    filtros: {
+        filtro1,
+        filtro2,
+        filtro3,
+    },
+    preferencias: {
+        pref1,
+        pref2,
+        pref3
+    }
+
+ }
+*/
+
 ws_server.on('connection', function connection(ws, request){
 
     ws.send(`conectado a server.`)
     //si truena quitar async
     ws.on('message', async function message(data) {
-        console.log('received data: %s', data)
         var json = JSON.parse(data);
-        console.log(json)
-        if(json.type == 'registration') {
-            console.log(`REGISTRATION: ${json.username}`)
+        console.log(`se recibió: ${JSON.stringify(json)}`)
+        
+        if(json.type == 'match_request') {
+            console.log(`attempting match for ${json.username}`)
+            
+            hacer_matching(ws, json)
+            
+
+        } else if(json.type == 'match_close') {
+            console.log(json.username)
+            console.log(matching_users[json.username])
+            delete matching_users[json.username]
+            console.log('deleted matching user')
+            console.log('usuarios haciendo match...')
+            console.log(matching_users) 
+        }else if(json.type == 'closing') {
+            //no funciona, otra opcion seria captar los usuarios desconectados hasta el momento en que fallen recibir mensajes
+            delete user_sockets[json.username]
+            console.log(`${json.username} disconnected`)
+            console.log(`current sockets: ${JSON.stringify(user_sockets)}`)
+        } else if(json.type == 'registration') {
+            //enviar el historial de todos los chats anteriores
+            //register as user socket
+            user_sockets[json.username] = ws
             var usr_dict = {};
             Usuario.findOne({username: json.username}, async (err, usuario) => {
                 if(err) {
@@ -111,9 +153,6 @@ ws_server.on('connection', function connection(ws, request){
                 interactuados.forEach((id) => {
                     data[id] = []
                 })
-                console.log(data)
-                console.log('todos los mensajes')
-                console.log(x.concat(y))
                 x.concat(y).forEach((mensaje) => {
                     if(usuario._id.equals(mensaje.id_remitente)) {
                         data[mensaje.id_destinatario.toString()].push(mensaje)
@@ -146,15 +185,6 @@ ws_server.on('connection', function connection(ws, request){
                         rel_chat[usuario._id.toString()] = usuario.username
                     })
 
-                    console.log('data a enviar: ')
-                    //datos a enviar
-                    //mensajes ordenados (o quizas ordenar en fron end)
-                    //ids y usernames de los participantes
-                    //fotografias de perfil de los usernames(o quizas cargar con un url)
-                    console.log(data)
-                    console.log('chats,rel')
-                    console.log(JSON.stringify(rel_chat))
-
                     ws.send(
                         JSON.stringify(
                             {
@@ -169,85 +199,262 @@ ws_server.on('connection', function connection(ws, request){
         } else if (json.type == 'message') {
             //GUARDAR A BASE DE DATOS
             //TODO: revisar casos donde no hay usuario ni destinatario correctos
-            Usuario.findOne({username: json.remitente}, (err, remitente) => {
-                if(err) return res.status(500)
-
-                if(!remitente) {
-                    return res.status(400)
-                }
-
-                Usuario.findOne({username: json.destinatario_actual}, (err, destinatario) => {
-                    if(err) return res.status(500)
-
-                    if(!destinatario) {
-                        return res.status(400)
-                    }
-                    //guardar a bd el mensaje
-                    const newMensaje = new Mensaje({
-                        id_destinatario: destinatario._id,
-                        contenido: json.mensaje,
-                        timestamp: Date.now(),
-                        id_remitente: remitente._id
-                    })
-                    newMensaje.save((err, mensaje) => {
-                        if(err) console.log(err)
-                    })
-                })
-            })
+            storeMessage(json)
             //delay para esperar a que se escriba en bd
             await new Promise(resolve => setTimeout(resolve, config.message_delay_time));
-            console.log('log mensajes')
-            Usuario.findOne({username: json.remitente}, (err, remitente) => {
-                if(err) return res.status(500)
-
-                if(!remitente) return res.status(400)
-
-                console.log(`remiente: ${remitente._id}`)
-
-                Usuario.findOne({username: json.destinatario_actual}, function(err, destinatario) {
-                    if(err) return res.status(500)
-
-                    if(!destinatario) return res.status(400)
-
-                    console.log(`destinatario: ${destinatario._id}`)
-
-                    var relacion = {}
-                    relacion[`${destinatario._id}`] = `${destinatario.username}`
-                    relacion[`${remitente._id}`] = `${remitente.username}`
-
-                    console.log(relacion)
-
-                    Mensaje.find({$or: [
-                        {id_remitente: remitente._id, id_destinatario: destinatario._id},
-                        {id_remitente: destinatario._id, id_destinatario: remitente._id}
-                    ]}, null, {sort: {timestamp: 1}}, (err, mensajes) => {
-                        if(err) return res.status(500)
-
-                        if(!mensajes) return res.status(400)
-
-                        //console.log(mensajes)
-                        mensajes.forEach(mensaje_obj => {
-                            var usuario = relacion[`${mensaje_obj.id_remitente}`]
-                            console.log(`(${usuario}, ${mensaje_obj.timestamp.toTimeString().slice(0, 5)}): ${mensaje_obj.contenido}`)
-                        })
-                    })
-
+            //console.log('log mensajes')
+            //showMessageLog(json.remitente, json.destinatario_actual)
+            user_sockets[json.remitente].send(
+                JSON.stringify({
+                    type: 'message',
+                    destinatario: json.destinatario_actual,
+                    remitente: json.remitente,
+                    contenido: json.mensaje
                 })
+            )
+            user_sockets[json.destinatario_actual].send(
+                JSON.stringify({
+                    type: 'message',
+                    destinatario: json.destinatario_actual,
+                    remitente: json.remitente,
+                    contenido: json.mensaje
+                })
+            )
+        } else if(json.type == 'match_message') {
+            storeMessage(json)
 
-                /*Mensaje.find({id_remitente: remitente._id}, (err, mensajes) => {
-                    if(err) return res.status(500)
+            await new Promise(resolve => setTimeout(resolve, config.message_delay_time));
 
-                    if(!mensajes) return res.status(400)
+            match_sockets[json.remitente].send(
+                JSON.stringify({
+                    type: 'match_message',
+                    destinatario: json.destinatario_actual,
+                    remitente: json.remitente,
+                    contenido: json.mensaje
+                })
+            )
 
-                    console.log(mensajes)
-                })*/
-            })
-    
+            match_sockets[json.destinatario_actual].send(
+                JSON.stringify({
+                    type: 'match_message',
+                    destinatario: json.destinatario_actual,
+                    remitente: json.remitente,
+                    contenido: json.mensaje
+                })
+            )
+
         }
         
         ws.send(`received ${data}`)
     })
 })
+
+async function hacer_matching(sock, json) {
+    console.log(`attempting match for ${json.username}`)
+    //add to poll
+    Usuario.findOne({username: json.username}, (err, usuario) => {
+        if(!usuario) {
+            console.log('no usuario encontrado en matching')
+            return
+        }
+        match_sockets[usuario.username] = sock; //permanent match sockets
+        matching_users[usuario.username] = {}
+        matching_users[usuario.username].id = usuario._id
+        matching_users[usuario.username].socket = sock
+        console.log('usuarios haciendo match...')
+        console.log(matching_users) 
+    })
+    //wait but only for data to load, not the queue random wait
+    await new Promise(resolve => setTimeout(resolve, config.message_delay_time)); //esperar
+    
+    var other_matchers = {...matching_users}
+    delete other_matchers[json.username]
+    console.log(`otros matchers: ${JSON.stringify(other_matchers)}`)
+    console.log(`todos: ${JSON.stringify(matching_users)}`)
+
+    var ids = []
+    for(var _username in matching_users) {
+        ids.push(matching_users[_username].id)
+    }
+
+    var match;
+
+    //find out which users work for the filter
+    Usuario.find({
+        '_id': {
+            $in: ids
+        }
+    }, (err, usuarios) => {
+        if(!usuarios) {
+            console.log('ningun usuario encontrado en matching')
+            return
+        }
+
+        var candidatos = [];
+        FiltroUsuario.find({
+            'id_usuario': {
+                $in: ids
+            } 
+        }, (err, filtros) => {
+            console.log(JSON.stringify(filtros))
+            var filtro_usuario;
+            for(var i in filtros) {
+                if(filtros[i].id_usuario.equals(matching_users[json.username].id)) { //set users filter
+                    filtro_usuario = filtros[i]
+                } 
+            }
+            //hacer 2 veces, la segunda es para comparar si son candidatos usando le filtro usuario
+            
+            if(filtro_usuario && usuarios) {
+                for(var i in usuarios) {
+                    if(usuarios[i].username == json.username) {
+                        continue
+                    }
+                    var hoy = new Date(Date.now())
+                    var edad = hoy.getFullYear() - usuarios[i].fecha_nacimiento.getFullYear()
+                    if(edad > filtro_usuario.edad_min && edad < filtro_usuario.edad_max && filtro_usuario.sexo_interes == usuarios[i].sexo) {
+                        candidatos.push(usuarios[i])
+                    }
+                }
+            }
+
+            console.log(`candidatos para ${json.username}: ${candidatos}`)
+
+            match = candidatos[Math.floor(Math.random() * candidatos.length)]
+            console.log(match)
+        })
+    })
+    await new Promise(resolve => setTimeout(resolve, config.message_delay_time)); //esperar
+    if(match) {
+
+        console.log(`user: ${json.username}`)
+        sock.send(JSON.stringify({
+            type: 'match_found',
+            match: match.username
+        }))
+
+        console.log(`dest: ${match}`)
+
+        matching_users[match.username].socket.send(JSON.stringify({
+            type: 'match_found',
+            match: json.username
+        }))
+    
+        console.log(`match: ${match.username}`)
+        console.log(`user: ${json.username}`)
+    
+        delete matching_users[match.username]
+        delete matching_users[json.username]
+    
+        console.log(`matchings restantes: ${JSON.stringify(matching_users)}`)
+    }
+
+    /*FiltroUsuario.find({
+        'id_usuario': {
+            $in: ids
+        } 
+    }, (err, filtros) => {
+        console.log(JSON.stringify(filtros))
+        var filtro_usuario;
+        for(var i in filtros) {
+            if(filtros[i].id_usuario.equals(matching_users[json.username])) { //set users filter
+                filtro_usuario = filtros[i]
+            } else {
+
+            }
+        }
+
+        console.log(`filtro maestro: ${filtro_usuario}`)
+    })*/
+}
+
+function storeMessage(message) {
+    Usuario.findOne({username: message.remitente}, (err, remitente) => {
+        if(err) {
+            console.log('fallo al grabar mensaje')
+            return
+        }
+
+        if(!remitente) {
+            console.log('no se encontró remitente')
+            return
+        }
+
+        Usuario.findOne({username: message.destinatario_actual}, (err, destinatario) => {
+            if(err) {
+                console.log('fallo al grabar mensaje')
+                return
+            }
+    
+            if(!destinatario) {
+                console.log('no se encontró destinatario')
+                return
+            }
+            //guardar
+            const newMensaje = new Mensaje({
+                id_destinatario: destinatario._id,
+                contenido: message.mensaje,
+                timestamp: Date.now(),
+                id_remitente: remitente._id
+            })
+            newMensaje.save((err, mensaje) => {
+                if(err) console.log(err)
+            })
+        })
+    })
+}
+
+function showMessageLog(remitente, destinatario) {
+    Usuario.findOne({username: destinatario}, (err, db_destinatario) => {
+        if(err) {
+            console.log('fallo al buscar usuario')
+            return
+        }
+
+        if(!db_destinatario) {
+            console.log('destinatario no encontrado')
+            return
+        }
+
+        Usuario.findOne({username: remitente}, (err, db_remitente) => {
+            if(err) {
+                console.log('fallo al buscar usuario')
+                return
+            }
+    
+            if(!db_destinatario) {
+                console.log('remitente no encontrado')
+                return
+            }
+
+            var relacion = {}
+            relacion[`${db_destinatario._id}`] = `${db_destinatario.username}`
+            relacion[`${db_remitente._id}`] = `${db_remitente.username}`
+
+            Mensaje.find({
+                $or: [
+                    {id_remitente: db_remitente._id, id_destinatario: db_destinatario._id},
+                    {id_remitente: db_destinatario._id, id_destinatario: db_remitente._id}
+                ]
+            }, null, {sort: {timestamp: 1}}, (err, mensajes) => {
+                if(err) {
+                    console.log('fallo al leer mensajes')
+                    return
+                }
+
+                if(!mensajes) {
+                    console.log('no existen mensajes')
+                    return
+                }
+
+                mensajes.forEach(mensaje_obj => {
+                    var usuario = relacion[`${mensaje_obj.id_remitente}`]
+                    console.log(`(${usuario}, ${mensaje_obj.timestamp.toTimeString().slice(0, 5)}): ${mensaje_obj.contenido}`)
+                })
+            })
+        })
+    })
+}
 
 
 const {readUsuario, createUsuario, updateUsuario, deleteUsuario} = require('../controllers/usuario');
@@ -260,6 +467,8 @@ const { distinct } = require('../models/usuario');
 const usuario = require('../models/usuario');
 const { default: mongoose } = require('mongoose');
 const { Socket } = require('dgram');
+const preferencia_personalidad = require('../models/preferencia_personalidad');
+const { match } = require('assert');
 
 router.get('/', (req, res) => {
     console.log("SESION")
@@ -338,13 +547,17 @@ router.get('/saludo', (req, res) => {
 })
 
 router.get('/inbox', (req, res) => {
-    res.render('inbox', {
+    res.render('inbox',{ layout: 'modules.hbs',
         username:req.session.username})
 })
 
 router.get('/logout', (req, res) => {
     req.session.destroy();
     res.status(200)
+})
+
+router.get('/matches', (req, res) => {
+    res.render('matches', {layout: 'modules.hbs', username: req.session.username})
 })
 
 //crud usuario
