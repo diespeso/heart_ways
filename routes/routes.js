@@ -64,7 +64,39 @@ ws_server.on('connection', function connection(ws, request){
             console.log('deleted matching user')
             console.log('usuarios haciendo match...')
             console.log(matching_users) 
-        }else if(json.type == 'closing') {
+        } else if(json.type == 'match_resp') {
+            console.log(`respuesta del match: ${json.resp}, resto: ${JSON.stringify(json)}`)
+            if(json.resp) { //confirmar si la otra persona tambien dijo que sí
+                
+            } else { //borrar la conversacion con esta persona
+                var usuarios = [json.remitente, json.destinatario_actual]
+                console.log(`usuarios afuera: ${usuarios}`)
+                Usuario.find({
+                    'username': {$in: usuarios}
+                }, (err, users) => {
+                    if(err) {
+                        console.log('error al buscar usuarios')
+                    }
+                    if(!users) {
+                        console.log('usuarios no encontrados')
+                    }
+                    //borrar todos los mensajes entre las 2 personas
+                    console.log(`usuario 1: ${users[0]._id}`)
+                    Mensaje.deleteMany({
+                        "id_remitente": users[0]._id,
+                        "id_destinatario": users[1]._id
+                    }, err => {
+                        console.log(`ERRRRRRORR: ${err}`)
+                    })
+                    Mensaje.deleteMany({
+                        "id_remitente": users[1]._id,
+                        "id_destinatario": users[0]._id
+                    }, err => {
+                        console.log(`ERRRRRRORR: ${err}`)
+                    })
+                })
+            }
+        } else if(json.type == 'closing') {
             //no funciona, otra opcion seria captar los usuarios desconectados hasta el momento en que fallen recibir mensajes
             delete user_sockets[json.username]
             console.log(`${json.username} disconnected`)

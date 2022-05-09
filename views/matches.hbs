@@ -37,11 +37,17 @@
                     document.getElementById('contenedor_matching').innerHTML = pantallas.found;
                     console.log(JSON.stringify(json));
                     destinatario_actual = json.match;
+                    setTimeout(times_out, 5000);
                 }
             }
         }
 
         document.getElementById('contenedor_matching').innerHTML = pantallas.matching;
+    }
+
+    function times_out() {
+        console.log('times out')
+        show_pop_up()
     }
 
     function cargar_mensaje(mensaje) {
@@ -77,6 +83,19 @@
         sock.send(JSON.stringify(json));
         document.getElementById('mensaje').value = '';
         //show_pop_up()
+    }
+
+    function enviar_resp_match(resp) {
+        console.log('enviando respuesta de match...')
+        var resp = resp;
+        var json = {
+            type: 'match_resp',
+            resp: resp,
+            remitente: username,
+            destinatario_actual: destinatario_actual
+        };
+        console.log(`enviando mensaje: ${JSON.stringify(json)}`)
+        sock.send(JSON.stringify(json));
     }
 
     var pantallas = {}
@@ -125,11 +144,16 @@
 
 
     function click_no() {
+        enviar_resp_match(false)
         hide_pop_up()
+        window.location.href = '/matches'
     }
 
     function click_si() {
-        show_pop_up()
+        //show_pop_up()
+        enviar_resp_match(true)
+        hide_pop_up()
+        window.location.href = '/inbox'
     }
 
     function hide_pop_up() {
