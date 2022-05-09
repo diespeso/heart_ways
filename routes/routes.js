@@ -298,22 +298,54 @@ async function hacer_matching(sock, json) {
         }, (err, filtros) => {
             console.log(JSON.stringify(filtros))
             var filtro_usuario;
+            var filtro_otro;
             for(var i in filtros) {
-                if(filtros[i].id_usuario.equals(matching_users[json.username].id)) { //set users filter
+                if(filtros[i].id_usuario.equals(matching_users[json.username].id)) { //filtro del usuario principal (el que hace match)
                     filtro_usuario = filtros[i]
-                } 
+                }
+
+            }
+
+            console.log("summary")
+            for(var i in filtros) {
+                console.log(JSON.stringify(filtros[i]))
+            }
+            for(var j in usuarios) {
+                console.log(JSON.stringify(usuarios[j]))
             }
             //hacer 2 veces, la segunda es para comparar si son candidatos usando le filtro usuario
-            
-            if(filtro_usuario && usuarios) {
-                for(var i in usuarios) {
+            var this_user;
+            if(filtro_usuario && usuarios) { //TODO: aplicar filtro bidireccional       
+                for(var i in usuarios) { //guardar usuario principal
                     if(usuarios[i].username == json.username) {
+                        this_user = usuarios[i]
+                    }
+                }      
+
+                for(var i in usuarios) {
+                    if(usuarios[i].username == json.username) { //ignorarse a si mismo
                         continue
                     }
                     var hoy = new Date(Date.now())
                     var edad = hoy.getFullYear() - usuarios[i].fecha_nacimiento.getFullYear()
                     if(edad > filtro_usuario.edad_min && edad < filtro_usuario.edad_max && filtro_usuario.sexo_interes == usuarios[i].sexo) {
-                        candidatos.push(usuarios[i])
+                        //se paso el filtro del usuario principal, falta aplicar el del secundario
+                        console.log(`usuario elegido para el matching: ${JSON.stringify(usuarios[i])} con filtro: ${JSON.stringify(filtro_usuario)}`)                       
+                        var filtro_otro;
+                        for(var j in filtros) { //buscar el filtro del usuario con el que se es compatible para confirmar de su lado
+                            if(filtros[j].id_usuario.equals(usuarios[i]._id)) {
+                                filtro_otro = filtros[j]
+                            }
+                        }
+                        var this_edad = hoy.getFullYear() - this_user.fecha_nacimiento.getFullYear()
+                        console.log(`edad de el: ${edad}, edad mia: ${this_edad}`)
+                        if(check_filtro(this_user, filtro_otro)) {
+                            console.log("filtro pasado!")
+                            candidatos.push(usuarios[i])
+                        } else {
+                            console.log("filtro fallado!")
+                        }
+                        
                     }
                 }
             }
@@ -559,6 +591,15 @@ router.get('/logout', (req, res) => {
 router.get('/matches', (req, res) => {
     res.render('matches', {layout: 'modules.hbs', username: req.session.username})
 })
+
+//utilerias
+
+function check_filtro(usuario, filtro) {
+    var hoy = new Date(Date.now())
+    var edad = hoy.getFullYear() - usuario.fecha_nacimiento.getFullYear()
+    return edad > filtro.edad_min && edad < filtro.edad_max && filtro.sexo_interes == usuario.sexo
+
+}
 
 //crud usuario
 router.post('/api/usuario', createUsuario)
