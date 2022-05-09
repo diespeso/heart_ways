@@ -5,10 +5,12 @@
     var username = '{{username}}'
     var destinatario_actual;
 
+    var host = "192.168.1.33"; //mala practica pero sorry
+
     function hacer_match() {
         console.log('enviando peticion match...')
 
-        sock = new WebSocket(`ws://localhost:${port}`);
+        sock = new WebSocket(`ws://${host}:${port}`);
 
         sock.onopen = function(e) {
             console.log('matching socket open')

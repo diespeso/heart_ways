@@ -1,10 +1,9 @@
 <link rel="stylesheet" href="/css/inbox.css">
 
 <script>
-
     //codigo para el menu sidebar deslizante
     var port = 80; //quizas cambiar y usar handlebars?
-
+    var host = "192.168.1.33" //mala practica pero sorry
     var sock;
     var chats;
     var rel_chat = {};
@@ -16,7 +15,7 @@
 
     var username = '{{username}}'; //handlebars, quizas seria mejor con session pero asi esta bien la vdd
     var destinatario_actual;
-    sock = new WebSocket(`ws://localhost:${port}`);
+    sock = new WebSocket(`ws://${host}:${port}`);
     
     sock.onopen = function(e) {
         console.log('recarga!')

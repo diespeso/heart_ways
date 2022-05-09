@@ -580,7 +580,8 @@ router.get('/saludo', (req, res) => {
 
 router.get('/inbox', (req, res) => {
     res.render('inbox',{ layout: 'modules.hbs',
-        username:req.session.username})
+        username:req.session.username,
+        host: config.host})
 })
 
 router.get('/logout', (req, res) => {
@@ -589,7 +590,9 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/matches', (req, res) => {
-    res.render('matches', {layout: 'modules.hbs', username: req.session.username})
+    res.render('matches', {layout: 'modules.hbs',
+    username: req.session.username,
+    host: config.host})
 })
 
 //utilerias

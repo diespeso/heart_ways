@@ -1,4 +1,5 @@
 module.exports = {
+    host: "192.168.1.33",
     port: process.env.PORT || 3030,
     ws_port: 80,
     db: process.env.MONGODB || 'mongodb://localhost:27017/heart_ways',
