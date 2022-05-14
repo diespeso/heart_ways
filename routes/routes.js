@@ -533,6 +533,7 @@ const { default: mongoose } = require('mongoose');
 const { Socket } = require('dgram');
 const preferencia_personalidad = require('../models/preferencia_personalidad');
 const { match } = require('assert');
+const { domainToASCII } = require('url');
 
 router.get('/', (req, res) => {
     console.log("SESION")
@@ -618,13 +619,85 @@ router.get('/inbox', (req, res) => {
 
 router.get('/logout', (req, res) => {
     req.session.destroy();
-    res.status(200)
+    res.redirect('/')
 })
 
 router.get('/matches', (req, res) => {
     res.render('matches', {layout: 'modules.hbs',
     username: req.session.username,
     host: config.host})
+})
+
+router.get('/perfil', async (req, res) => {
+    console.log(req.session.username)
+    var user = {username: req.session.username}
+    var datos = {}
+    var filtros = {}
+    var preferencias = ""
+    //datos
+    Usuario.findOne({username: req.session.username},
+        (err, encontrado) => {
+            if(err) {
+                return res.status(500)
+            }
+            if(!encontrado) {
+                return res.status(400)
+            }
+            datos.mail = encontrado["correo"]
+            datos.password = "?" //TODO
+            datos.sex = encontrado["sexo"]
+            var fecha = encontrado["fecha_nacimiento"]
+            datos.birth_date = `${fecha.getDate() + 1}/${fecha.getMonth() + 1}/${fecha.getFullYear()}`
+            
+            FiltroUsuario.findOne({id_usuario: encontrado._id},
+            (err, filtro) => {
+                if(err) {
+                    return res.status(500)
+                }
+                if(!filtro) {
+                    return res.status(400)
+                }
+                filtros.sex_interest = filtro["sexo_interes"]
+                filtros.min_age = filtro["edad_min"]
+                filtros.max_age = filtro["edad_max"]
+            })
+
+            PreferenciaPersonalidad.find({id_usuario: encontrado._id},
+            (err, prefs) => {
+                if(err) {
+                    return res.status(500)
+                }
+                if(!prefs) {
+                    return res.status(400)
+                }
+
+                for(var i in prefs) {
+                    var pref = prefs[i]
+                    var pref_clone = JSON.parse(JSON.stringify(pref))
+                    delete pref_clone["_id"]
+                    delete pref_clone["id_usuario"]
+                    delete pref_clone["__v"]
+
+                    console.log("preferencias:")
+                    console.log(JSON.stringify(pref_clone))
+                
+                    preferencias += `
+                    <div class="col preference-capsule" id="pref_${pref_clone["preferencia"]}">            
+                    <span class="preference-title">${pref_clone["preferencia"]}</span>
+                    <img class="preference_value"src="${pref_clone["valor"]? '/img/check-mark.png': '/img/remove.png'}">
+                    </div>
+                    `
+                }
+            })
+        })
+    
+    //await para enviarlo hasta que esté, tiempo doble porque tarda un poco
+    await new Promise(resolve => setTimeout(resolve, config.message_delay_time * 2));
+
+    //preferencias
+    
+    res.render('perfil', {layout: 'modules.hbs', user: user,
+    datos: datos, filtros: filtros, preferencias: preferencias})
 })
 
 //utilerias

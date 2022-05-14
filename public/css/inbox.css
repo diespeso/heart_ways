@@ -10,7 +10,11 @@
 
 .inbox-card {
     border-radius: 4px;
-    
+}
+
+.inbox-card-selected {
+    background-color: red;
+    box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
 }
 
 .inbox-card img {
@@ -23,6 +27,25 @@
     font-size: 1.2em;
     font-weight: bold;
    
+}
+
+#destinatario-top {
+    background-color: antiquewhite;
+    position: absolute;
+    top: 1vh;
+    left: 25%;
+    width: 25%;
+    height: 8vh;
+}
+
+#destinatario-top-name {
+    background-color: aqua;
+}
+
+#destinatario-top img {
+    margin: 2%;
+    width: 30%;
+    display: inline;
 }
 
 .summary {

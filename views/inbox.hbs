@@ -60,8 +60,8 @@
                     }
                     
                     document.getElementById('inbox-side-list').innerHTML += `
-                        <a href="#" onclick="cargar_chat('${interaccion}')">
-                            <div class="inbox-card">
+                        <a href="#" onclick="cargar_chat('${interaccion}', '${json.users[interaccion]}')">
+                            <div class="inbox-card" id="card_${json.users[interaccion]}">
                                 <img src="/img/placeholder.png">
                                 <div class="summary">
                                     <p class="inbox-username">${json.users[interaccion]}</p>
@@ -92,8 +92,11 @@
 
     
 
-    function cargar_chat(user) {
+    function cargar_chat(user, user_name) {
+        console.log(`char de ${user_name}`)
         cambiar_destinatario(user)
+        document.getElementById('destinatario-top').style.display = "block";
+        document.getElementById('destinatario-top-name').innerHTML = `${user_name}`;
         ///code might break
         sock.send(JSON.stringify({
             type: 'registration',
@@ -170,6 +173,8 @@
         console.log(user)
         destinatario_actual = rel_chat[user]
         console.log(`destinatario actual: ${destinatario_actual}`)
+        console.log(document.getElementById(`card_${destinatario_actual}`))
+        document.getElementById(`card_${destinatario_actual}`).classList.add('inbox-card-selected');
     }
 
     function cambiar_destinatario_illegal(user) {
@@ -179,10 +184,13 @@
 
 
 </script>
-
+<div id="destinatario-top" style="display: none">
+    <img src="img/placeholder.png">
+    <span id="destinatario-top-name">null</span>
+</div>
 <div class="row">
     <div class="col-3 inbox-side-list" id="inbox-side-list">
-    
+
     </div>
     <div class="col-9 chat-container">
         <div class="row centered">

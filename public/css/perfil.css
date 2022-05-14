@@ -1,0 +1,94 @@
+.body-container {
+    background-color: lightblue;
+    width: 92%;
+    height: 82vh;
+    margin-top: 2%;
+    margin-left: 4%;
+    margin-right: 4%;
+    margin-bottom: 2%;
+    border-radius: 7px 7px;
+    box-shadow: 3px 10px 15px -7px rgba(0,0,0,0.47);
+}
+
+.left-container {
+
+}
+
+.left-container img {
+    width: 50%;
+    position: relative;
+    left: 25%;
+    top: 5vh;
+}
+
+#username {
+    background-color: bisque;
+    position: relative;
+    top: 15vh;
+    left: -10%;
+}
+
+.right-container {
+    background-color: rgba(240, 240, 240, 0.5);
+    padding: 1%;
+}
+
+.right-content {
+    background-color: beige;
+}
+
+.panel-heading {
+    background-color: yellow;
+}
+
+.panel {
+    background-color: rgba(0,0,0,0.5);
+    margin-bottom: 10%;
+}
+
+#panel-intereses {
+    padding: 2%;
+    display: grid;
+    grid-template-columns: auto auto auto;
+    background-color: aliceblue;
+    grid-gap: 10%;
+}
+
+
+.item-capsule {
+    box-shadow: 3px 10px 15px -7px rgba(0,0,0,0.47);
+    background-color: azure;
+    display: inline;
+    margin-right: 10%;
+}
+
+.item-title {
+    font-weight: bold;
+}
+
+.preference-capsule {
+    box-shadow: 3px 10px 15px -7px rgba(0,0,0,0.47);
+    background-color: rgb(77, 153, 153);
+    display: inline;
+    margin-right: 10%;
+}
+
+.preference-title {
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.preference_value {
+    margin-top: -5px;
+    width: 15px;
+    height: 15px;
+}
+
+.edit_icon {
+    margin-top: -5px;
+    width: 15px;
+    height: 15px;
+}
+
+main {
+    background-color: black;
+}

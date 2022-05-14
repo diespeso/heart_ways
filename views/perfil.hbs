@@ -1,0 +1,92 @@
+<link rel="stylesheet" href="/css/perfil.css">
+
+<script>
+    window.onload = function() {
+        document.getElementById("panel-intereses").innerHTML = `{{{preferencias}}}`;
+    }
+    
+</script>
+
+<div class="body-container">
+    <div class="row">
+        <div class="col-3">
+            <div class="left-container">
+                <img src="/img/placeholder.png">
+                <span id="username">{{user.username}}</span>
+            </div>
+        </div>
+        <div class="col-9">
+            <div class="right-container">
+                <div class="right-content">
+
+                    <div class="panel-heading">Datos</div>
+                    <div class="panel">
+                        <div class="row">
+                            <div class="col item-capsule">
+                                <span class="item-title">Correo</span>
+                                <span id="mail">{{datos.mail}}</span>
+                            </div>
+                            <div class="col item-capsule">
+                                <span class="item-title">Contraseña</span>
+                                <span id="password">{{datos.password}}</span>
+                            </div>
+
+                            <div class="row">
+                                <div class="col item-capsule">
+                                    <span class="item-title">Fecha Nacimiento</span>
+                                    <span id="birth_date">{{datos.birth_date}}</span>
+                                </div>
+                                <div class="col item-capsule">
+                                    <span class="item-title">Sexo</span>
+                                    <span id="sex">{{datos.sex}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-heading">Filtros</div>
+                    <div class="panel">
+                        <div class="row">
+                            <div class="col item-capsule">
+                                <span class="item-title">Interés en</span>
+                                <span id="sex_interest">{{filtros.sex_interest}}</span>
+                            </div>
+                            <div class="col item-capsule">
+                                <span class="item-title">Edad mínima</span>
+                                <span id="min_age">{{filtros.min_age}}</span>
+                            </div>
+                            <div class="col item-capsule">
+                                <span class="item-title">Edad máxima</span>
+                                <span id="max_age">{{filtros.max_age}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="panel-heading">Intereses</div>
+                    <div class="panel">
+                        <div class="row" id="panel-intereses">
+                            {{{preferencias}}}
+                            <!--<div class="col preference-capsule" id="preference_1">
+                                <span class="preference-title">Mascotas</span>
+                                <img class="preference_value" id="" src="/img/placeholder.png">
+                                <a href="#" onclick="">
+                                    <img class="edit_icon" src="/img/placeholder.png">
+                                </a>
+                            </div>
+                            <div class="col preference-capsule" id="preference_2">
+                                
+                                <span class="preference-title">Playa</span>
+                                <img class="preference_value" id="" src="/img/placeholder.png">
+                                <a href="#" onclick="">
+                                    <img class="edit_icon" src="/img/placeholder.png">
+                                </a>
+                            </div>-->
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
