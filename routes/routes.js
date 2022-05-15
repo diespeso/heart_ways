@@ -527,7 +527,7 @@ const { createPreferenciaPersonalidad, readPreferenciaPersonalidad, updatePrefer
 const { createMensaje, readMensaje, updateMensaje, deleteMensaje } = require('../controllers/mensaje');
 const res = require('express/lib/response');
 const Mensaje = require('../models/mensaje');
-const { distinct } = require('../models/usuario');
+const { distinct, findOneAndUpdate } = require('../models/usuario');
 const usuario = require('../models/usuario');
 const { default: mongoose } = require('mongoose');
 const { Socket } = require('dgram');
@@ -720,6 +720,41 @@ router.post('/api/filtro_usuario', createFiltroUsuario)
 router.get('/api/filtro_usuario/:filtro_usuario', readFiltroUsuario)
 router.put('/api/filtro_usuario/:filtro_usuario', updateFiltroUsuario)
 router.delete('/api/filtro_usuario/:filtro_usuario', deleteFiltroUsuario)
+
+router.put(`/api/usuario/edit_filters/:username`, (req, res) => {
+    //buscar filtrousuario usando username y actualizar manualmente
+    console.log('usuario:')
+    console.log(req.params.username)
+    console.log('body:')
+    console.log(req.body)
+
+    const fusr_mod = {
+        id: {},
+        update: req.body
+    }
+
+    Usuario.findOne({username: req.params.username}, (err, encontrado) => {
+        if(err) return res.status(500).send({message: "fallo al buscar usuario"})
+
+        if(!encontrado) return res.status(400).send({message: "usuario no encontrado"})
+
+        /*FiltroUsuario.findOne({id_usuario: encontrado._id}, (err, filtro) => {
+            if(err) return res.status(500).send({message: "Fallo al buscar filtro"})
+
+            if(!filtro) return res.status(400).send({message: "filtro no encontrado"})
+
+
+        })*/
+
+        FiltroUsuario.findOneAndUpdate({id_usuario: encontrado._id}, fusr_mod.update, {new: true}, (err, filtro) => {
+            if(err) return res.status(500).send({message: `error al actualizar filtro: ${err}`})
+
+            if(!filtro) return res.status(400).send({message: "filtro no encontrado"})
+
+            return res.status(200).send({message: `filtro actualizado para usuario ${encontrado.username}`})
+        })
+    })
+})
 
 //crud preferenciapersonalidad
 router.post('/api/preferencia_personalidad', createPreferenciaPersonalidad)

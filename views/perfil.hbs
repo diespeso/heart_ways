@@ -77,6 +77,54 @@
         alternar("btn-editar-datos", "btn-guardar-datos", "block");
     }
 
+    function editar_filtros() {
+        alternar("sex_interest", "sex_interest-edit", "inline-block");
+
+        alternar("min_age", "min_age-edit", "inline-block");
+        relevar_valor("min_age", "min_age-edit","text", "value");
+        
+        alternar("max_age", "max_age-edit", "inline-block");
+        relevar_valor("max_age", "max_age-edit","text", "value");
+
+        alternar("btn-editar-filtros", "btn-guardar-filtros", "inline-block");
+    
+        //cargar valor que estaba en sex_interest
+        if(document.getElementById("sex_interest") == "M") {
+            document.getElementById("sex-interest-edit-m").checked = true;
+            document.getElementById("sex-interest-edit-f").checked = false;
+        } else {
+            document.getElementById("sex-interest-edit-m").checked = false;
+            document.getElementById("sex-interest-edit-f").checked = true;
+        }
+    } 
+
+    function enviar_filtros() {
+        alternar("sex_interest", "sex_interest-edit", "inline-block");
+        alternar("min_age", "min_age-edit", "inline-block");
+        alternar("max_age", "max_age-edit", "inline-block");
+
+        alternar("btn-editar-filtros", "btn-guardar-filtros", "inline-block");
+    
+        var xhr = new XMLHttpRequest();
+        xhr.open("PUT", `/api/usuario/edit_filters/{{user.username}}`, true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        var sex_valor;
+        if(document.getElementById("sex-interest-edit-f").checked) {
+            sex_valor = 'F';
+        } else {
+            sex_valor = 'M';
+        }
+
+        var json = JSON.stringify({
+            sexo_interes: sex_valor,
+            edad_min: document.getElementById("min_age-edit").value,
+            edad_max: document.getElementById("max_age-edit").value
+        });
+
+
+        xhr.send(json);
+    }
+
     function relevar_valor(id_a, id_b, type_a, type_b) {
         var temp;
 
@@ -113,7 +161,7 @@
 
     function alternar(id1, id2, type) {
 
-        console.log(`${id1}, ${id2}`)
+        console.log(`valores actuales: ${id1}, ${id2}`)
         var st1 = document.getElementById(id1).style.display;
         var st2 = document.getElementById(id2).style.display;
 
@@ -185,17 +233,27 @@
                         <div class="row">
                             <div class="col item-capsule">
                                 <span class="item-title">Interés en</span>
-                                <span id="sex_interest">{{filtros.sex_interest}}</span>
+                                <span id="sex_interest" style="display: inline-block;">{{filtros.sex_interest}}</span>
+                                <div id="sex_interest-edit" style="display: none;">
+                                    M
+                                    <input type="radio" id="sex-interest-edit-m" name="sex_interest-edit" value="M">
+                                    F
+                                    <input type="radio" id="sex-interest-edit-f" name="sex_interest-edit" value="F">
+                                </div>
                             </div>
                             <div class="col item-capsule">
                                 <span class="item-title">Edad mínima</span>
-                                <span id="min_age">{{filtros.min_age}}</span>
+                                <span id="min_age" style="display: inline-block;">{{filtros.min_age}}</span>
+                                <input type="number" id="min_age-edit" min="18" max="100" style="display:none;">
                             </div>
                             <div class="col item-capsule">
                                 <span class="item-title">Edad máxima</span>
-                                <span id="max_age">{{filtros.max_age}}</span>
+                                <span id="max_age" style="display: inline-block;">{{filtros.max_age}}</span>
+                                <input type="number" id="max_age-edit" min="18" max="100" style="display:none;">
                             </div>
                         </div>
+                        <button id="btn-editar-filtros" onclick="editar_filtros();" style="display: inline-block;">editar</button>
+                        <button id="btn-guardar-filtros" onclick="enviar_filtros();" style="display: none;">guardar</button>
                     </div>
 
                     <div class="panel-heading">Intereses</div>
