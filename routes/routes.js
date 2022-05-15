@@ -732,3 +732,11 @@ router.post('/api/mensaje', createMensaje)
 router.get('/api/mensaje/:mensaje', readMensaje)
 router.put('/api/mensaje/:mensaje', updateMensaje)
 router.delete('/api/mensaje/:mensaje', deleteMensaje)
+
+router.post('/api/edit/usuario/:usuario', (req, res) => {
+    console.log(req.params.usuario)
+    //guardar modificaciones de usuario en base de datos
+    updateUsuario(req, res)
+    console.log("cuerpo: ")
+    console.log(req.body)
+})

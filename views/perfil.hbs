@@ -5,6 +5,131 @@
         document.getElementById("panel-intereses").innerHTML = `{{{preferencias}}}`;
     }
     
+    function editar_datos() {
+        alternar("mail", "mail-edit", "inline-block");
+        relevar_valor("mail", "mail-edit", "text", "value");
+        
+        alternar("birth_date", "birth-date-edit", "inline-block");
+        relevar_valor("birth_date", "birth-date-edit", "text", "date");
+
+        alternar("sex", "sex-edit", "inline-block");
+        if(document.getElementById("sex").innerText == "M") {
+            document.getElementById("sex-edit-m").checked = true;
+            document.getElementById("sex-edit-f").checked = false;
+        } else {
+            document.getElementById("sex-edit-f").checked = true;
+            document.getElementById("sex-edit-m").checked = false;
+        }
+
+        alternar("btn-editar-datos", "btn-guardar-datos", "inline-block");
+    }
+
+    function enviar_datos() {
+        alternar("mail", "mail-edit", "inline-block");
+        
+
+        alternar("birth_date", "birth-date-edit", "inline-block");
+
+        alternar("sex", "sex-edit", "inline-block");
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("PUT", `/api/usuario/{{user.username}}`, true); //TODO: quizas cambiar a PUT
+        xhr.setRequestHeader('Content-Type', 'application/json');
+        var sex_valor;
+        if(document.getElementById("sex-edit-f").checked) {
+            sex_valor = 'F';
+        } else {
+            sex_valor = 'M';
+        }
+        var json = JSON.stringify({
+                correo: document.getElementById("mail-edit").value,
+                fecha_nacimiento: document.getElementById("birth-date-edit").valueAsDate,
+                sexo: sex_valor
+            });
+        console.log(`json a mandar: ${json}`)
+        xhr.send(
+            json
+        );
+        /*var xhr = new XMLHttpRequest();
+        xhr.open("POST", `/api/edit/usuario/{{user.username}}`, true); //TODO: quizas cambiar a PUT
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        var sex_valor;
+        if(document.getElementById("sex-edit-f").checked) {
+            sex_valor = 'F';
+        } else {
+            sex_valor = 'M';
+        }
+
+        xhr.send(`mail=${document.getElementById("mail-edit").value}&birth-date=${document.getElementById("birth-date-edit").valueAsDate}&sex=${sex_valor}`)
+        */
+        /*var xhr = new XMLHttpRequest();
+        xhr.open("PUT", `/api/usuario/{{user.username}}`, true); //TODO: quizas cambiar a PUT
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        var sex_valor;
+        if(document.getElementById("sex-edit-f").checked) {
+            sex_valor = 'F';
+        } else {
+            sex_valor = 'M';
+        }
+
+        xhr.send(`mail=${document.getElementById("mail-edit").value}&birth-date=${document.getElementById("birth-date-edit").valueAsDate}&sex=${sex_valor}`)
+        */
+        alternar("btn-editar-datos", "btn-guardar-datos", "block");
+    }
+
+    function relevar_valor(id_a, id_b, type_a, type_b) {
+        var temp;
+
+        //texto a fecha
+        if(type_a == "text" && type_b == "date") {
+            temp = document.getElementById(id_a).innerText;
+            var nums = temp.split('/');
+            console.log(`${nums[2]}/${nums[1] - 1}/${nums[0]}`)
+            var date = new Date(`${nums[2]}/${nums[1]}/${nums[0]}`)
+            console.log(date);
+            document.getElementById(id_b).valueAsDate = date;
+            return
+        }
+        //fecha a texto
+        //TODO
+
+        if(type_a == "value") {
+            temp = document.getElementById(id_a).value;
+        } else if(type_a == "date") {
+            temp = document.getElementById(id_a).valueAsDate;
+        } else { //text
+            temp = document.getElementById(id_a).innerText;
+        }
+
+        if(type_b == "value") {
+            document.getElementById(id_b).value = temp;
+        } else if (type_b == "date") {
+            document.getElementById(id_b).valueAsDate = temp; 
+        } else {
+            document.getElementById(id_b).innerText = temp;
+        }
+
+    }
+
+    function alternar(id1, id2, type) {
+
+        console.log(`${id1}, ${id2}`)
+        var st1 = document.getElementById(id1).style.display;
+        var st2 = document.getElementById(id2).style.display;
+
+        if(st1 == "none" || st1 == "") {
+            document.getElementById(id1).style.display = type;
+        } else {
+            document.getElementById(id1).style.display = "none";
+        }
+
+        if(st2 == "none" || st2 == "") {
+           document.getElementById(id2).style.display = type;
+        } else {
+           document.getElementById(id2).style.display = "none";
+        }
+    }
+
 </script>
 
 <div class="body-container">
@@ -24,7 +149,8 @@
                         <div class="row">
                             <div class="col item-capsule">
                                 <span class="item-title">Correo</span>
-                                <span id="mail">{{datos.mail}}</span>
+                                <span id="mail" style="display: inline-block;">{{datos.mail}}</span>
+                                <input id="mail-edit" type="text" style="display: none;">
                             </div>
                             <div class="col item-capsule">
                                 <span class="item-title">Contraseña</span>
@@ -34,14 +160,24 @@
                             <div class="row">
                                 <div class="col item-capsule">
                                     <span class="item-title">Fecha Nacimiento</span>
-                                    <span id="birth_date">{{datos.birth_date}}</span>
+                                    <span id="birth_date" style="display: inline-block;">{{datos.birth_date}}</span>
+                                    <input id="birth-date-edit" type="date" style="display: none;"> 
                                 </div>
                                 <div class="col item-capsule">
                                     <span class="item-title">Sexo</span>
-                                    <span id="sex">{{datos.sex}}</span>
+                                    <span id="sex" style="display: inline-block;">{{datos.sex}}</span>
+                                    <div id="sex-edit" style="display: none;">
+                                        M
+                                        <input type="radio" id="sex-edit-m" name="sex-edit" value="M">
+                                        F
+                                        <input type="radio" id="sex-edit-f" name="sex-edit" value="F">
+                                    </div>
+                                    
                                 </div>
                             </div>
                         </div>
+                        <button id="btn-editar-datos" onclick="editar_datos();" style="display: inline-block;">editar</button>
+                        <button id="btn-guardar-datos" onclick="enviar_datos();" style="display: none;">guardar</button>
                     </div>
 
                     <div class="panel-heading">Filtros</div>

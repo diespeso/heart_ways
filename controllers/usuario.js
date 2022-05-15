@@ -45,6 +45,8 @@ const updateUsuario = ((req, res) => {
         update: req.body
     }
 
+    console.log(JSON.stringify(usr_mod))
+
     Usuario.findOneAndUpdate({username: usr_mod.username},
         usr_mod.update, {new: true}, (err, usuario) => {
             if(err) return res.status(500).send({
@@ -54,7 +56,7 @@ const updateUsuario = ((req, res) => {
             if(!usuario) return res.status(400).send({
                 messsage: `usuario no encontrado: ${usr_mod.username}`
             })
-
+            console.log('terminado')
             return res.status(200).send({message: `actualizado a: ${usuario}`})
     })
 })
