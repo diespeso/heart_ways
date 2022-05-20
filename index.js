@@ -7,6 +7,8 @@ const sessions = require('express-session')
 const app = express()
 const oneDay = 1000 * 60 * 60 * 24;
 
+const multer = require('multer')
+
 const ws = require('ws') //websocket
 
 app.use(sessions({

@@ -1,8 +1,19 @@
 <link rel="stylesheet" href="/css/perfil.css">
 
 <script>
+
+
     window.onload = function() {
         document.getElementById("panel-intereses").innerHTML = `{{{preferencias}}}`;
+
+        //check for no image (code for jpg doesnt work, whatevs)
+        if(document.getElementById('profile_pic').naturalHeight == 0) { //not loaded
+            document.getElementById('profile_pic').src = '/img/profile_pics/{{user.username}}.jpg'; //intentar cargar un jpg
+            if(document.getElementById('profile_pic').naturalHeight == 0) { //si aun asi no carga, poner placeholder
+                document.getElementById('profile_pic').src = "/img/profile_pics/placeholder.png";
+            }
+            
+        }
     }
     
     function editar_datos() {
@@ -20,6 +31,8 @@
             document.getElementById("sex-edit-f").checked = true;
             document.getElementById("sex-edit-m").checked = false;
         }
+
+        document.getElementById('pfp_upload').style.display = "block";
 
         alternar("btn-editar-datos", "btn-guardar-datos", "inline-block");
     }
@@ -50,6 +63,17 @@
         xhr.send(
             json
         );
+
+        if(document.getElementById("pfp_upload").files.length > 0) {
+            console.log('request!')
+            var formData = new FormData();
+            formData.append('pfp_upload', document.getElementById("pfp_upload").files[0])
+            var req = new XMLHttpRequest();
+            formData.forEach((x) => console.log(x))
+            req.open('POST', '/api/upload/profile_pic/');
+            //req.setRequestHeader('Content-Type', 'multipart/form-data');
+            req.send(formData);
+        }
         /*var xhr = new XMLHttpRequest();
         xhr.open("POST", `/api/edit/usuario/{{user.username}}`, true); //TODO: quizas cambiar a PUT
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -74,6 +98,8 @@
 
         xhr.send(`mail=${document.getElementById("mail-edit").value}&birth-date=${document.getElementById("birth-date-edit").valueAsDate}&sex=${sex_valor}`)
         */
+
+        document.getElementById('pfp_upload').style.display = "none";
         alternar("btn-editar-datos", "btn-guardar-datos", "block");
     }
 
@@ -122,7 +148,7 @@
         });
 
 
-        xhr.send(json);
+        xhr.send(json);        
     }
 
     function relevar_valor(id_a, id_b, type_a, type_b) {
@@ -184,7 +210,8 @@
     <div class="row">
         <div class="col-3">
             <div class="left-container">
-                <img src="/img/placeholder.png">
+                <img id="profile_pic" src="/img/profile_pics/{{user.username}}.png">
+                <input type="file" id="pfp_upload" name="pfp_upload" style="display: none; position: relative; top: 7vh; left: 5%;">
                 <span id="username">{{user.username}}</span>
             </div>
         </div>

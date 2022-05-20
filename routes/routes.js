@@ -17,6 +17,8 @@ const FiltroUsuario = require('../models/filtro_usuario')
 const ws = require('ws');
 const config = require('../config')
 
+const fs = require('fs')
+
 const ws_server = new ws.WebSocketServer({port: config.ws_port});
 console.log('websockets server running at: ws://localhost:%s', config.ws_port)
 
@@ -25,6 +27,7 @@ var user_sockets = {};
 var matching_users = {};
 
 var match_sockets = {};
+
 
 /*estructura
  matching-user[username] = {
@@ -534,6 +537,7 @@ const { Socket } = require('dgram');
 const preferencia_personalidad = require('../models/preferencia_personalidad');
 const { match } = require('assert');
 const { domainToASCII } = require('url');
+const multer = require('multer');
 
 router.get('/', (req, res) => {
     console.log("SESION")
@@ -788,3 +792,29 @@ router.post('/api/edit/usuario/:usuario', (req, res) => {
     console.log("cuerpo: ")
     console.log(req.body)
 })
+
+var storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, './public/img/profile_pics/')
+    },
+    filename: (req, file, cb) => {
+        console.log(req.session.username)
+        cb(null, `${req.session.username}${path.extname(file.originalname)}`, path.extname(file.originalname))
+    }
+})
+
+var upload = multer({storage: storage});
+router.post('/api/upload/profile_pic/', upload.single("pfp_upload"), (req, res) => {
+    console.log(req.file)
+    var file = req.file;
+    console.log(file.filename)
+    file.filename = "no"
+    console.log(file.filename)
+    res.sendStatus(200)
+})
+/*
+router.post('/api/upload/profile_pic/', (req, res) => {
+    var username = req.session.username
+
+    res.status(200).send({message: 'todo ok'})
+})*/
