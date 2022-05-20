@@ -749,7 +749,20 @@ router.put(`/api/usuario/edit_filters/:username`, (req, res) => {
         FiltroUsuario.findOneAndUpdate({id_usuario: encontrado._id}, fusr_mod.update, {new: true}, (err, filtro) => {
             if(err) return res.status(500).send({message: `error al actualizar filtro: ${err}`})
 
-            if(!filtro) return res.status(400).send({message: "filtro no encontrado"})
+            if(!filtro) {
+                //crear el filtro
+                const newFilter = FiltroUsuario({
+                    sexo_interes: fusr_mod.update.sexo_interes,
+                    edad_min: fusr_mod.update.edad_min,
+                    edad_max: fusr_mod.update.edad_max,
+                    id_usuario: encontrado._id
+                })
+                newFilter.save((err, save) => {
+                    if(err) return res.status(500).send({message: `no se pudo crear filtrousuario: ${err}`})
+                })
+                return res.status(200).send({message: 'filtrousuario creado'})
+                //return res.status(400).send({message: "filtro no encontrado"})
+            }
 
             return res.status(200).send({message: `filtro actualizado para usuario ${encontrado.username}`})
         })
