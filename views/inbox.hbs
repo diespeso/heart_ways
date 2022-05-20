@@ -8,6 +8,10 @@
     var chats;
     var rel_chat = {};
 
+    window.onload = function() {
+        document.getElementById('pfp_destinatario').src = `img/profile_pics/${destinatario_actual}.png`; //debe ser png
+    }
+
     function set_chats(c, r_c) {
         chats = c;
         rel_chat = r_c;
@@ -18,7 +22,6 @@
     sock = new WebSocket(`ws://${host}:${port}`);
     
     sock.onopen = function(e) {
-        console.log('recarga!')
         sock.send(JSON.stringify({
             type: 'registration',
             username: username
@@ -40,21 +43,17 @@
         try {
             var json = JSON.parse(msg.data)
         } catch(e) {
-            console.log(`received: ${msg.data}`)
             f = false
         }
         if(f) {
             if(json.type == 'message') {
-                console.log(JSON.stringify(json))
                 cargar_mensaje(json)
             } else if(json.type == 'inbox') {
                 document.getElementById('inbox-side-list').innerHTML = '' //rewrite
-                console.log(json)
 
                 set_chats(json.chats, json.users)
                 
                 for(var interaccion in json.users) {
-                    console.log(interaccion)
                     if(json.users[interaccion] == username) {
                         continue //if its our own, ignore
                     }
@@ -85,7 +84,6 @@
             remitente: username,
             destinatario_actual: destinatario_actual
         };
-        console.log(`enviando mensaje: ${JSON.stringify(json)}`)
         sock.send(JSON.stringify(json));
         document.getElementById('mensaje').value = '';
     }
@@ -93,10 +91,17 @@
     
 
     function cargar_chat(user, user_name) {
-        console.log(`char de ${user_name}`)
         cambiar_destinatario(user)
         document.getElementById('destinatario-top').style.display = "block";
         document.getElementById('destinatario-top-name').innerHTML = `${user_name}`;
+        document.getElementById('pfp_destinatario').src = `img/profile_pics/${destinatario_actual}.png`; //debe ser png
+
+        
+
+        /*if(document.getElementById('pfp_destinatario').naturalHeight == 0) {
+            document.getElementById('pfp_destinatario').src = "img/profile_pics/placeholder.png";
+        } else {
+        }*/
         ///code might break
         sock.send(JSON.stringify({
             type: 'registration',
@@ -169,23 +174,18 @@
 
     function cambiar_destinatario(user) {
         /*destinatario_actual = user;*/
-        console.log(rel_chat)
-        console.log(user)
         destinatario_actual = rel_chat[user]
-        console.log(`destinatario actual: ${destinatario_actual}`)
-        console.log(document.getElementById(`card_${destinatario_actual}`))
         document.getElementById(`card_${destinatario_actual}`).classList.add('inbox-card-selected');
     }
 
     function cambiar_destinatario_illegal(user) {
         destinatario_actual = user;
-        console.log(`destinatario actual ilegal: ${destinatario_actual}`)
     }
 
 
 </script>
 <div id="destinatario-top" style="display: none">
-    <img src="img/placeholder.png">
+    <img id="pfp_destinatario" src="img/profile_pics/placeholder.png">
     <span id="destinatario-top-name">null</span>
 </div>
 <div class="row">
