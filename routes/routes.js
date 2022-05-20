@@ -603,7 +603,8 @@ router.post('/login', (req, res) => {
                 return res.redirect('/inbox')
                 //return res.status(200).send({message: `todo bien`}) //cambiar a inbox
             } else {
-                return res.status(400).send({message: 'contrasenia incorrecta'})
+                return res.redirect(`/?failed_login=true`)
+                //return res.status(400).send({message: 'contrasenia incorrecta'})
             }
         })
         //return res.status(200).redirect('/saludo')
@@ -612,10 +613,13 @@ router.post('/login', (req, res) => {
 
 router.get('/saludo', (req, res) => {
     console.log('sirviendo un get de la página saludo');
-    res.render('saludo', {})
+    res.redirect('/')
 })
 
 router.get('/inbox', (req, res) => {
+    if(!req.session.username) {
+        return res.redirect('/')
+    }
     res.render('inbox',{ layout: 'modules.hbs',
         username:req.session.username,
         host: config.host})
@@ -627,12 +631,18 @@ router.get('/logout', (req, res) => {
 })
 
 router.get('/matches', (req, res) => {
+    if(!req.session.username) {
+        return res.redirect('/')
+    }
     res.render('matches', {layout: 'modules.hbs',
     username: req.session.username,
     host: config.host})
 })
 
 router.get('/perfil', async (req, res) => {
+    if(!req.session.username) {
+        return res.redirect('/')
+    }
     console.log(req.session.username)
     var user = {username: req.session.username}
     var datos = {}
@@ -702,6 +712,12 @@ router.get('/perfil', async (req, res) => {
     
     res.render('perfil', {layout: 'modules.hbs', user: user,
     datos: datos, filtros: filtros, preferencias: preferencias})
+})
+
+router.get('/acerca_de', (req, res) => {
+    if(!req.session.username) res.redirect('/')
+    res.render('acerca_de', {layout: 'modules.hbs'})
+
 })
 
 //utilerias

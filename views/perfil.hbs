@@ -101,6 +101,7 @@
 
         document.getElementById('pfp_upload').style.display = "none";
         alternar("btn-editar-datos", "btn-guardar-datos", "block");
+        location.reload();
     }
 
     function editar_filtros() {
@@ -148,7 +149,8 @@
         });
 
 
-        xhr.send(json);        
+        xhr.send(json);   
+        location.reload();     
     }
 
     function relevar_valor(id_a, id_b, type_a, type_b) {
