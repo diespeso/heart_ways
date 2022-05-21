@@ -1,6 +1,6 @@
 
 .inbox-side-list {
-    background-color: blueviolet;
+    background-color: #2EC4B6;
     padding-top: 0.5%;
     padding-bottom: 0.5%;
     padding-left: 1%;
@@ -10,6 +10,7 @@
 
 .inbox-card {
     border-radius: 4px;
+    text-decoration: none;
 }
 
 .inbox-card-selected {
@@ -30,16 +31,22 @@
 }
 
 #destinatario-top {
-    background-color: antiquewhite;
+    background-color: #EDE7E3;
     position: absolute;
-    top: 1vh;
+    top: 0.5vh;
     left: 25%;
     width: 25%;
     height: 8vh;
+
+    border-radius: 10px;
+    background: #EDE7E3;
+    box-shadow:  10px 10px 10px #b4b0ad,
+                -10px -10px 10px #ffffff;
 }
 
 #destinatario-top-name {
-    background-color: aqua;
+    font-weight: bold;
+    font-size: 1.3em;
 }
 
 #destinatario-top img {
@@ -48,19 +55,34 @@
     display: inline;
 }
 
+#link_profile {
+    color: black;
+}
+
 .summary {
     display: inline-block;
+
+    text-decoration: none;
     
+}
+
+a {
+    text-decoration: none; /*fix*/
 }
 
 .summary p {
     margin: 0;
-    color: orange;
+    color: white;
+    text-decoration: none;
 }
 
+
+
 .inbox-card:hover {
-    background-color: lightseagreen;
+    background-color: #FFBF69;
     box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    color: black;
 }
 
 #main {
@@ -71,9 +93,10 @@
 }
 
 .chat-container {
-    background-color: forestgreen;
-    background-image: url("/img/background-whats.jpg");
+    background-color: whitesmoke;
+    background-image: url("/img/frutas.png");
     overflow: scroll;
+    background-repeat: no-repeat;
     /*padding-right: 1.2%;*/
     /*padding-left: 15%;
     padding-right: 15%;*/
@@ -81,9 +104,9 @@
 
 .chat {
     /*no soportado por firefox*/
-    background-color: rgba(200, 220, 255, 0.8);
+    background-color: rgba(203, 243, 240, 0.65);
     height: 9vh;
-    /*backdrop-filter: blur(2px);*/
+    backdrop-filter: blur(3px);
     border-radius: 10px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
     margin-top: 5px;
@@ -93,9 +116,9 @@
 
 .new-message-container {
     /*no soportado por firefox*/
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(203, 243, 240, 0.65);
     height: 8.5vh;
-    /*backdrop-filter: blur(2px);*/
+    backdrop-filter: blur(3px);
     border-radius: 10px;
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
     margin-top: 5px;
@@ -111,12 +134,20 @@
     box-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
     margin-top: 5px;
     /*margin-left: 8.3%;*/  
-    background-color: rgba(255, 255, 255, 0.8);
+    background-color: rgba(203, 243, 240, 0.65);
     height: 8.5vh;
 }
 
 .btn-send button {
     margin-top: 40%;
+    background-image: url('/img/icons/send.png');
+    height: 50px;
+    width: 50px;
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid rgba(0, 0, 0, 0);
+    margin-top: 1.75vh;
+    margin-left: 4%;
+    background-size: 50px 50px;
 }
 
 .centered {
@@ -131,7 +162,7 @@
 }
 
 .message-bubble-left {
-    background-color: rgba(205, 250, 240, 0.9);
+    background-color: rgba(205, 250, 240, 1.0);
     width: 40%;
     margin-top: 1vh;
     margin-left: 2%;
@@ -142,10 +173,12 @@
     padding-bottom: 0.1vh;
     height: auto;
     box-shadow: -1px 2px 2px rgba(0, 0, 0, 0.5);
+
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 .message-bubble-right {
-    background-color: rgba(215, 226, 224, 0.9);
+    background-color: rgba(255, 191, 105, 1.0);
     width: 40%;
     margin-top: 1vh;
     margin-left: auto;
@@ -158,6 +191,8 @@
     display: flex;
     flex-direction: row;
     box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.5);
+
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 }
 
 ::-webkit-scrollbar {

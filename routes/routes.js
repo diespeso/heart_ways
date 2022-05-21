@@ -714,6 +714,11 @@ router.get('/perfil', async (req, res) => {
     datos: datos, filtros: filtros, preferencias: preferencias})
 })
 
+router.get('/user/:user', (req, res) => {
+    if(!req.session.username) return res.redirect('/')
+    return res.send({message: 'todo'})
+})
+
 router.get('/acerca_de', (req, res) => {
     if(!req.session.username) res.redirect('/')
     res.render('acerca_de', {layout: 'modules.hbs'})

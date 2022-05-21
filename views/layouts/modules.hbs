@@ -4,7 +4,9 @@
         <title>Heart's ways</title>
         <link rel="stylesheet" href="/css/modules.css">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
+        <link rel="icon" href="/img/logo.png">
+
+        
         <script>
             var opened = false;
             function openSidebar() {
@@ -26,17 +28,19 @@
     </head>
     <body>
         <div class="top-bar">
-            <button class="open-sidebar" onclick="openSidebar()">Abrir</button>
-            <img src="/img/placeholder.png">
+            <button class="open-sidebar" onclick="openSidebar()"></button>
+            <div id="logo-container">
+                <img src="/img/logo.png">
+            </div>
         </div>
         <div class="contenido">
             <div class="sidebar" id="mysidebar">
                 <!--<a href="javascript::void(0)" class="close-sidebar" onclick="closeSidebar()">X</a>-->
-                <a href="/inbox"><div class="icono-sidebar">s</div>Inbox</a>
-                <a href="/matches"><div class="icono-sidebar">s</div>Matches</a>
-                <a href="/perfil"><div class="icono-sidebar">s</div>Perfil</a>
-                <a href="/acerca_de"><div class="icono-sidebar">s</div>Acerca de</a>
-                <a href="/logout"><div class="icono-sidebar">s</div>Cerrar sesión</a>
+                <a href="/inbox" class="link-sidebar"><div class="icono-sidebar"><img src="/img/icons/inbox.png"></div>Inbox</a>
+                <a href="/matches"><div class="icono-sidebar"><img src="/img/icons/matches.png"></div>Matches</a>
+                <a href="/perfil"><div class="icono-sidebar"><img src="/img/icons/profile.png"></div>Perfil</a>
+                <a href="/acerca_de"><div class="icono-sidebar"><img src="/img/icons/acerca_de.png"></div>Acerca de</a>
+                <a href="/logout"><div class="icono-sidebar"><img src="/img/icons/log_out.png"></div>Cerrar sesión</a>
             </div>
 
             <div id="main">

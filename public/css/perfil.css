@@ -1,5 +1,5 @@
 .body-container {
-    background-color: lightblue;
+    background-color: #CBF3F0;
     width: 92%;
     height: 82vh;
     margin-top: 2%;
@@ -11,7 +11,6 @@
 }
 
 .left-container {
-
 }
 
 .left-container img {
@@ -22,59 +21,88 @@
 }
 
 #username {
-    background-color: bisque;
+    background-color: #FFBF69;
     position: relative;
-    top: 15vh;
-    left: -10%;
+    top: 8vh;
+    padding: 10px;
+
+    margin-left: auto;
+    margin-right: auto;
+    width: 40%;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 4px;
 }
 
 .right-container {
-    background-color: rgba(240, 240, 240, 0.5);
+    background-color: rgba(240, 240, 240, 0.75);
+    height: 82vh;
     padding: 1%;
 }
 
 .right-content {
-    background-color: beige;
+    /*background-color: beige;*/
 }
 
 .panel-heading {
-    background-color: yellow;
+    background-color: #FF9F1C;
+    font-weight: bold;
+    padding: 2px;
+    padding-left: 10px;
+    border-radius: 2px;
+
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .panel {
-    background-color: rgba(0,0,0,0.5);
+    background-color: #2EC4B6;
     margin-bottom: 10%;
+    border-radius: 4px;
+    margin-left: 4%;
 }
 
 #panel-intereses {
     padding: 2%;
     display: grid;
     grid-template-columns: auto auto auto;
-    background-color: aliceblue;
+    background-color: #2EC4B6;
     grid-gap: 10%;
+    margin-left: 5px;
+    margin-right: 5px;
+
+    border-radius: 3px;
 }
 
 
 .item-capsule {
     box-shadow: 3px 10px 15px -7px rgba(0,0,0,0.47);
-    background-color: azure;
+    background-color: #CBF3F0;
     display: inline;
     margin-right: 10%;
+    margin-left: 4%;
+    border-radius: 3px;
+    margin-top: 1%;
+    margin-bottom: 1%;
 }
 
 .item-title {
     font-weight: bold;
+
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
 }
 
 .preference-capsule {
-    box-shadow: 3px 10px 15px -7px rgba(0,0,0,0.47);
-    background-color: rgb(77, 153, 153);
+    box-shadow: 5px 10px 7px -7px rgba(0,0,0,0.47);
+    background-color: #CBF3F0;
+    color: black;
     display: inline;
     margin-right: 10%;
+    margin-top: 3%;
+    border-radius: 2px;
 }
 
 .preference-title {
-    color: rgba(0, 0, 0, 0.5);
+    color: rgba(0, 0, 0, 1.0);
 }
 
 .preference_value {
@@ -91,4 +119,46 @@
 
 main {
     background-color: black;
+}
+
+.btn-editar {
+    background-color: #CBF3F0;
+    border: 1px solid rgba(0, 0, 0, 0);
+    margin: 10px;
+    border-radius: 3px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-weight: bold;
+
+    background: linear-gradient(145deg, #31d2c3, #29b0a4);
+box-shadow:  5px 5px 10px #23958a,
+             -5px -5px 10px #39f3e2;
+}
+
+.btn-editar:hover {
+    box-shadow: 5px 3px 7px 0px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 5px 3px 7px 0px rgba(0,0,0,0.4);
+    -moz-box-shadow: 5px 3px 7px 0px rgba(0,0,0,0.4);
+    transform: scale(0.98);
+}
+
+.btn-guardar {
+    background-color: #CBF3F0;
+    border: 1px solid rgba(0, 0, 0, 0);
+    margin: 10px;
+    border-radius: 3px;
+    padding-left: 15px;
+    padding-right: 15px;
+    font-weight: bold;
+
+    background: linear-gradient(145deg, #31d2c3, #29b0a4);
+box-shadow:  5px 5px 10px #23958a,
+             -5px -5px 10px #39f3e2;
+}
+
+.btn-guardar:hover {
+    box-shadow: 5px 3px 7px 0px rgba(0,0,0,0.4);
+    -webkit-box-shadow: 5px 3px 7px 0px rgba(0,0,0,0.4);
+    -moz-box-shadow: 5px 3px 7px 0px rgba(0,0,0,0.4);
+    transform: scale(0.98);
 }

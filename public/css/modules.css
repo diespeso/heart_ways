@@ -1,17 +1,35 @@
 .top-bar {
-    background-color: grey;
+    background-color: #EDE7E3;
     height: 10vh;
 }
 
 .top-bar img {
-    width: auto;
-    height: 50%;
+    width:100px;
+    height: 100px;
+    margin-top: -10%;
     margin: 1%;
 }
 
 .top-bar p {
     display: inline-block;
     margin-left: 1%;
+}
+
+#logo-container {
+    position: absolute;
+    top: 0px;
+    left: 5%;
+}
+
+.open-sidebar {
+    background-image: url('/img/icons/menu.png');
+    margin-left: 0.5%;
+    padding-bottom: 1.5vh;
+    margin-top: 2.6vh;
+    height: 40px;
+    width: 40px;
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid rgba(0, 0, 0, 0);
 }
 
 
@@ -29,21 +47,43 @@
 }
 
 .sidebar a {
-    background-color: orange;
+    background-color: #FFBF69;
     display: block;
     padding-top: 5%;
     padding-bottom: 5%;
-    margin: 1%;
+    margin: 2%;
+    margin-bottom: 0.5vh;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 2px 10px 5px -8px rgba(0,0,0,0.27);
+    -webkit-box-shadow: 2px 10px 5px -8px rgba(0,0,0,0.27);
+    -moz-box-shadow: 2px 10px 5px -8px rgba(0,0,0,0.27);
+    border-top: 4px solid rgba(255, 255, 255, 0.4);
 
+    text-decoration: none;
+    color: black;
+}
+
+.sidebar a:hover {
+    background-color: #2ec4b6;
+    box-shadow: 2px 10px 5px -8px rgba(0,0,0,0.8);
+    -webkit-box-shadow: 2px 10px 5px -8px rgba(0,0,0,0.8);
+    -moz-box-shadow: 2px 10px 5px -8px rgba(0,0,0,0.8);
+    border-top: 4px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: scale(1.1);
 }
 
 .icono-sidebar {
     width: 10%;
     height: 10%;
-    background-color: black;
     display: inline-block;
     margin-left: 3%;
     margin-right: 3%;
+}
+
+.icono-sidebar img {
+    width: 25px;
+    height: 25px;
 }
 
 
@@ -60,4 +100,8 @@
 body {
     background-color: pink;
     overflow: hidden;
+}
+
+.sidebar {
+    background-color: #FFBF69;
 }

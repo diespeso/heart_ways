@@ -1,4 +1,118 @@
+body {
+    background-color: whitesmoke;
+    overflow: hidden;
+}
+
+h1 {
+    background-color: #2EC4B6;
+    width: 40%;
+    color: white;
+    z-index: -1;
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+a {
+    text-decoration: none;
+    color: orange;
+}
+
+a:hover {
+    color:#CBF3F0;
+}
+
+#subtitulo {
+    padding-left: 18px;
+}
+
+label {
+    color: rgba(0, 0, 0, 0.50);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-weight: bold;
+}
+
 .side-img img {
     max-width: 100%;
     max-height: 100%;
+    z-index: 2;
+}
+
+.middle-panel {
+    margin-left: -3%;
+    height: 98vh;
+    z-index: 2;
+}
+
+.right-panel-color {
+    width: 240px;
+    height: 98vh;
+    background-color: #FFBF69;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    z-index: -1;
+}
+
+.right-panel-no-color {
+    width: 480px;
+    height: 98vh;
+    position: absolute;
+    background-color: whitesmoke;
+    top: 0px;
+    right: 240px;
+    z-index: 0;
+    box-shadow: -2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+}
+
+.footer {
+    background-color: black;
+    width: 100%;
+    height: 3vh;
+    position: absolute;
+    bottom: 0px;
+    z-index: 3;
+    color: white;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+#flower-pic {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 100vh;
+}
+
+.panel {
+    width: 50%;
+    padding: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+    margin-top: 60px;
+    margin-bottom: 60px;
+    margin-left: 35px;
+    -webkit-border-radius: 45px;
+    border-radius: 45px;
+    background: #f5f5f5;
+    -webkit-box-shadow: 9px 9px 14px #d0d0d0, -9px -9px 14px #ffffff;
+    box-shadow: 9px 9px 14px #d0d0d0, -9px -9px 14px #ffffff;
+}
+
+.btn-submit {
+    /*background-color: #FFBF69;*/
+    background-color:  #CBF3F0;
+    border-radius: 5px;
+    border: 1px solid black;
+    margin-top: 5px;
+    font-weight: bold;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    color: rgba(0, 0, 0, 0.75);
+}
+
+input {
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+}
+
+#img-left {
+    height: 100%;
+    z-index: 2;
 }

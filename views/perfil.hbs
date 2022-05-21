@@ -214,7 +214,7 @@
             <div class="left-container">
                 <img id="profile_pic" src="/img/profile_pics/{{user.username}}.png">
                 <input type="file" id="pfp_upload" name="pfp_upload" style="display: none; position: relative; top: 7vh; left: 5%;">
-                <span id="username">{{user.username}}</span>
+                <div id="username">{{user.username}}</div>
             </div>
         </div>
         <div class="col-9">
@@ -229,18 +229,18 @@
                                 <span id="mail" style="display: inline-block;">{{datos.mail}}</span>
                                 <input id="mail-edit" type="text" style="display: none;">
                             </div>
+                            <!--
                             <div class="col item-capsule">
                                 <span class="item-title">Contraseña</span>
                                 <span id="password">{{datos.password}}</span>
-                            </div>
-
-                            <div class="row">
-                                <div class="col item-capsule">
+                            </div> -->
+                            <div class="col item-capsule">
                                     <span class="item-title">Fecha Nacimiento</span>
                                     <span id="birth_date" style="display: inline-block;">{{datos.birth_date}}</span>
                                     <input id="birth-date-edit" type="date" style="display: none;"> 
-                                </div>
-                                <div class="col item-capsule">
+                            </div>
+
+                            <div class="col item-capsule">
                                     <span class="item-title">Sexo</span>
                                     <span id="sex" style="display: inline-block;">{{datos.sex}}</span>
                                     <div id="sex-edit" style="display: none;">
@@ -249,12 +249,10 @@
                                         F
                                         <input type="radio" id="sex-edit-f" name="sex-edit" value="F">
                                     </div>
-                                    
                                 </div>
-                            </div>
                         </div>
-                        <button id="btn-editar-datos" onclick="editar_datos();" style="display: inline-block;">editar</button>
-                        <button id="btn-guardar-datos" onclick="enviar_datos();" style="display: none;">guardar</button>
+                        <button class="btn-editar" id="btn-editar-datos" onclick="editar_datos();" style="display: inline-block;">editar</button>
+                        <button class="btn-guardar" id="btn-guardar-datos" onclick="enviar_datos();" style="display: none;">guardar</button>
                     </div>
 
                     <div class="panel-heading">Filtros</div>
@@ -281,8 +279,8 @@
                                 <input type="number" id="max_age-edit" min="18" max="100" style="display:none;">
                             </div>
                         </div>
-                        <button id="btn-editar-filtros" onclick="editar_filtros();" style="display: inline-block;">editar</button>
-                        <button id="btn-guardar-filtros" onclick="enviar_filtros();" style="display: none;">guardar</button>
+                        <button class="btn-editar" id="btn-editar-filtros" onclick="editar_filtros();" style="display: inline-block;">editar</button>
+                        <button class="btn-guardar" id="btn-guardar-filtros" onclick="enviar_filtros();" style="display: none;">guardar</button>
                     </div>
 
                     <div class="panel-heading">Intereses</div>
@@ -305,6 +303,9 @@
                                 </a>
                             </div>-->
                         </div>
+
+                        <button class="btn-editar" id="btn-editar-filtros" onclick="" style="display: inline-block;">editar</button>
+                        <button class="btn-guardar" id="btn-guardar-filtros" onclick="" style="display: none;">guardar</button>
                         
                     </div>
                 </div>

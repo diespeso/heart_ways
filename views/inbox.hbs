@@ -61,10 +61,10 @@
                     document.getElementById('inbox-side-list').innerHTML += `
                         <a href="#" onclick="cargar_chat('${interaccion}', '${json.users[interaccion]}')">
                             <div class="inbox-card" id="card_${json.users[interaccion]}">
-                                <img src="/img/placeholder.png">
+                                <img src="/img/profile_pics/${json.users[interaccion]}.png">
                                 <div class="summary">
                                     <p class="inbox-username">${json.users[interaccion]}</p>
-                                    <p>mensaje</p> <!--usar solo un max de caracteres para esto-->
+                                    <!--<p>mensaje</p> usar solo un max de caracteres para esto-->
                                 </div>
                             </div>
                         </a>
@@ -175,6 +175,7 @@
     function cambiar_destinatario(user) {
         /*destinatario_actual = user;*/
         destinatario_actual = rel_chat[user]
+        document.getElementById('link_profile').href = `/user/${destinatario_actual}`;
         document.getElementById(`card_${destinatario_actual}`).classList.add('inbox-card-selected');
     }
 
@@ -184,10 +185,12 @@
 
 
 </script>
-<div id="destinatario-top" style="display: none">
-    <img id="pfp_destinatario" src="img/profile_pics/placeholder.png">
-    <span id="destinatario-top-name">null</span>
-</div>
+<a id="link_profile" href="#">
+    <div id="destinatario-top" style="display: none">
+        <img id="pfp_destinatario" src="img/profile_pics/placeholder.png">
+        <span id="destinatario-top-name">null</span>
+    </div>
+</a>
 <div class="row">
     <div class="col-3 inbox-side-list" id="inbox-side-list">
 
@@ -206,7 +209,6 @@
             </div>
             <div class="col-1 btn-send">
                 <button onclick="enviarMensaje()">
-                    Enviar
                 </button>
             </div>
         </div>

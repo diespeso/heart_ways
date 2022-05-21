@@ -37,7 +37,7 @@
                     document.getElementById('contenedor_matching').innerHTML = pantallas.found;
                     console.log(JSON.stringify(json));
                     destinatario_actual = json.match;
-                    setTimeout(times_out, 5000);
+                    setTimeout(times_out, 1000 * 60 * 5); //5 mins
                 }
             }
         }
@@ -100,15 +100,21 @@
 
     var pantallas = {}
     pantallas.inicio = `
-        <h2>Intentar match!</h2>
-        <button onclick="hacer_match()">
-            Hacer MATCH
-        </button>
+        <!--<h2>Intentar match!</h2>-->
+        <div class="matching-wait-container">
+            <button id="btn-match" onclick="hacer_match()">
+                Hacer MATCH
+            </button>
+        </div>
     `;
 
     pantallas.matching = `
-        <h2>Matching...<h2>
-            <img src="/img/loading_dots.gif">
+        <div class="matching-wait-container">
+            <h2>Matching...<h2>
+            <!--<img src="/img/loading_dots.gif">-->
+            <div class="loader"></div>
+        </div>
+        
     `;
 
     pantallas.found = `
@@ -123,7 +129,7 @@
                 </form>
             </div>
             <div class="col-1 btn-send">
-                <button onclick="enviar_mensaje()">Enviar</button>
+                <button onclick="enviar_mensaje()"></button>
             </div>
         </div>
 

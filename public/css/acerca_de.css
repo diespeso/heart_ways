@@ -1,0 +1,42 @@
+.content {
+    background-color: black;
+    text-align: center;
+}
+
+.acerca-de {
+    background-color: #2EC4B6;
+    width: 30%;
+    position: absolute;
+    left: 35%;
+    top: 30%;
+    height: 50%;
+
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0.2);
+}
+
+.acerca-de .title {
+    font-weight: bold;
+    color: white;
+    text-align: center;
+    font-size: 1.7em;
+
+    font-family:Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.acerca-de .content {
+    background-color: white;
+    color: #2EC4B6;
+    height: 90%;
+}
+
+.content span {
+    color: #FF9F1C;
+}
+
+a {
+    color:#FF9F1C;
+}
+
+a:hover {
+    color: black;
+}
