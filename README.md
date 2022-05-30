@@ -6,6 +6,9 @@ Proyecto para la materia de cómputo distribuido, creado por Edgar Regalado
   ### index
   ![](https://github.com/diespeso/heart_ways/blob/main/public/img/pantallas/main.png)
   
+  ### perfil
+  ![](https://github.com/diespeso/heart_ways/blob/main/public/img/pantallas/perfil.png)
+  
   ### inbox
   ![](https://github.com/diespeso/heart_ways/blob/main/public/img/pantallas/inbox.png)
   
